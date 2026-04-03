@@ -7,10 +7,26 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, Calendar, User, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getEntryBySlug, CONTENT_TYPES, getAssetUrl } from '@/lib/contentful';
+import { getEntryBySlug, CONTENT_TYPES, getAssetUrl, getFirstImageUrl } from '@/lib/contentful';
+import RichTextRenderer from '@/components/ui/rich-text-renderer';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const entry = await getEntryBySlug(CONTENT_TYPES.ARTICLE, slug);
+  if (!entry?.fields) return {};
+  const fields = entry.fields as any;
+  const title = (fields.title as string) || 'Artikel';
+  const excerpt = (fields.excerpt as string) || '';
+  const imageUrl = getFirstImageUrl(fields.image);
+  return {
+    title: `${title} | HOVTECH Artikel`,
+    description: excerpt,
+    openGraph: { title: `${title} | HOVTECH`, description: excerpt, type: 'article', ...(imageUrl && { images: [{ url: imageUrl }] }) },
+  };
+}
 
 const defaultCompany = { name: 'HOVTECH', tagline: 'Automation & IoT', logo: null, whatsapp: '6285733118439', instagram: 'https://instagram.com/hovtech.id' };
 
@@ -24,9 +40,9 @@ export default async function ArtikelDetailPage({ params }: { params: Promise<{ 
   const companyInfo = defaultCompany;
   const title = (fields.title as string) || '';
   const category = (fields.category as string) || '';
-  const content = (fields.content as string) || (fields.description as string) || '';
-  const imageUrl = getAssetUrl(fields.image);
-  const author = (fields.author as string) || 'HOVTECH Team';
+  const excerpt = (fields.excerpt as string) || '';
+  const content = fields.content || null; // RichText
+  const imageUrl = getFirstImageUrl(fields.image);
   const publishedAt = (fields.publishedAt as string) || entry.sys.createdAt;
 
   const formatDate = (d: string) => new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -35,6 +51,7 @@ export default async function ArtikelDetailPage({ params }: { params: Promise<{ 
     <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-900">
       <Navbar logo={getAssetUrl(companyInfo.logo)} companyName={companyInfo.name} tagline={companyInfo.tagline} whatsapp={companyInfo.whatsapp} />
       <main className="flex-1">
+        {/* Hero Section */}
         <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-12 sm:py-16 md:py-20">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <Link href="/artikel" className="inline-flex items-center gap-2 text-slate-400 hover:text-orange-500 transition-colors mb-4 sm:mb-6 text-sm"><ArrowLeft className="w-4 h-4" /> Kembali ke Artikel</Link>
@@ -42,11 +59,15 @@ export default async function ArtikelDetailPage({ params }: { params: Promise<{ 
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6 leading-tight">{title}</h1>
             <div className="flex flex-wrap gap-3 sm:gap-4 text-xs sm:text-sm text-slate-400">
               <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {formatDate(publishedAt)}</span>
-              <span className="flex items-center gap-1.5"><User className="w-3.5 h-3.5" /> {author}</span>
+              <span className="flex items-center gap-1.5"><User className="w-3.5 h-3.5" /> HOVTECH Team</span>
             </div>
+            {excerpt && (
+              <p className="mt-4 text-slate-300 text-sm sm:text-base leading-relaxed italic">{excerpt}</p>
+            )}
           </div>
         </section>
 
+        {/* Article Content */}
         <section className="py-8 sm:py-10 md:py-16">
           <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             {imageUrl && (
@@ -55,9 +76,10 @@ export default async function ArtikelDetailPage({ params }: { params: Promise<{ 
               </div>
             )}
 
+            {/* RichText Content */}
             {content && (
-              <div className="prose prose-slate max-w-none text-sm sm:text-base leading-relaxed text-slate-700 whitespace-pre-line mb-8 sm:mb-10">
-                {content}
+              <div className="mb-8 sm:mb-10">
+                <RichTextRenderer document={content} />
               </div>
             )}
 

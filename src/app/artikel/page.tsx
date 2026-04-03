@@ -5,7 +5,7 @@ import FloatingWhatsApp from '@/components/layout/FloatingWhatsApp';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import ArticleListClient from '@/components/clients/ArticleListClient';
-import { getFirstEntry, getEntries, CONTENT_TYPES, getAssetUrl } from '@/lib/contentful';
+import { getFirstEntry, getEntries, CONTENT_TYPES, getAssetUrl, getFirstImageUrl } from '@/lib/contentful';
 
 export const metadata: Metadata = { title: 'Artikel', description: 'Baca artikel terbaru seputar otomasi industri, IoT, tips & trik, dan kegiatan HOVTECH.' };
 export const dynamic = 'force-dynamic';
@@ -33,7 +33,7 @@ async function getCompanyInfo() {
 async function getArticles() {
   try {
     const entries = await getEntries(CONTENT_TYPES.ARTICLE, { order: '-fields.publishedAt' });
-    if (entries.length > 0) return entries.map((item: any) => ({ _id: item.sys.id, title: (item.fields.title as string) || '', slug: (item.fields.slug as string) || '', excerpt: (item.fields.excerpt as string) || '', imageUrl: getAssetUrl(item.fields.image), category: (item.fields.category as string) || '', publishedAt: (item.fields.publishedAt as string) || item.sys.createdAt, featured: (item.fields.featured as boolean) || false }));
+    if (entries.length > 0) return entries.map((item: any) => ({ _id: item.sys.id, title: (item.fields.title as string) || '', slug: (item.fields.slug as string) || '', excerpt: (item.fields.excerpt as string) || '', imageUrl: getFirstImageUrl(item.fields.image), category: (item.fields.category as string) || '', publishedAt: (item.fields.publishedAt as string) || item.sys.createdAt, featured: (item.fields.featured as boolean) || false }));
     return defaultArticles;
   } catch { return defaultArticles; }
 }

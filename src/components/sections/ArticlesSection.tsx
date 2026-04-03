@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Calendar, ArrowRight } from 'lucide-react';
-import { getEntries, CONTENT_TYPES, getAssetUrl } from '@/lib/contentful';
+import { getEntries, CONTENT_TYPES, getAssetUrl, getFirstImageUrl } from '@/lib/contentful';
 
 const defaultArticles = [
   {
@@ -47,7 +47,7 @@ async function getFeaturedArticles() {
         title: (item.fields.title as string) || '',
         slug: (item.fields.slug as string) || '',
         excerpt: (item.fields.excerpt as string) || '',
-        imageUrl: getAssetUrl(item.fields.image),
+        imageUrl: getFirstImageUrl(item.fields.image),
         category: (item.fields.category as string) || '',
         publishedAt: (item.fields.publishedAt as string) || item.sys.createdAt,
       }));
@@ -60,7 +60,7 @@ async function getFeaturedArticles() {
         title: (item.fields.title as string) || '',
         slug: (item.fields.slug as string) || '',
         excerpt: (item.fields.excerpt as string) || '',
-        imageUrl: getAssetUrl(item.fields.image),
+        imageUrl: getFirstImageUrl(item.fields.image),
         category: (item.fields.category as string) || '',
         publishedAt: (item.fields.publishedAt as string) || item.sys.createdAt,
       }));

@@ -91,3 +91,22 @@ export function getGalleryUrls(gallery: any[]): string[] {
     .map((asset) => getAssetUrl(asset))
     .filter((url): url is string => !!url);
 }
+
+export function getFirstImageUrl(image: any): string | undefined {
+  // Handle single Link (Asset)
+  if (image && !Array.isArray(image)) return getAssetUrl(image);
+  // Handle Array of Link (Asset)
+  if (Array.isArray(image) && image.length > 0) return getAssetUrl(image[0]);
+  return undefined;
+}
+
+export function getImageUrls(images: any): string[] {
+  // Handle single Link
+  if (images && !Array.isArray(images)) {
+    const url = getAssetUrl(images);
+    return url ? [url] : [];
+  }
+  // Handle Array
+  if (Array.isArray(images)) return getGalleryUrls(images);
+  return [];
+}
