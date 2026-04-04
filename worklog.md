@@ -60,3 +60,21 @@ Stage Summary:
 - All routes verified working (7/7 return HTTP 200)
 - All pages use Contentful live data with fallback defaults
 - Zero lint errors
+---
+Task ID: 2
+Agent: Main Agent
+Task: Fix hydration mismatch errors and DialogContent accessibility warning
+
+Work Log:
+- Investigated full codebase for hydration mismatch sources and DialogContent violations
+- Found 2 critical hydration issues: `Math.random()` in `useState(generateCaptcha())` in ContactSection.tsx (line 67) and ContactForm.tsx (line 30)
+- Found 1 medium issue: `DialogHeader` with `DialogTitle` placed outside `DialogContent` in command.tsx
+- Fixed ContactSection.tsx: changed `useState(generateCaptcha())` to `useState(null)`, generate captcha in `useEffect`, render `... = ?` placeholder until client mounts, disable submit button until mounted
+- Fixed ContactForm.tsx: same pattern as above
+- Fixed command.tsx: moved `DialogHeader > DialogTitle > DialogDescription` inside `DialogContent`, added fallback title 'Command'
+- Verified: lint 0 errors, dev log all 200 OK
+
+Stage Summary:
+- Hydration mismatch: RESOLVED (captcha now generates client-side only)
+- DialogContent accessibility warning: RESOLVED (DialogTitle now properly nested inside DialogContent)
+- Files modified: ContactSection.tsx, ContactForm.tsx, command.tsx

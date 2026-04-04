@@ -27,12 +27,13 @@ export default function ContactForm() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '', website: '' });
-  const [captcha, setCaptcha] = useState(generateCaptcha());
+  const [captcha, setCaptcha] = useState<ReturnType<typeof generateCaptcha> | null>(null);
   const [captchaInput, setCaptchaInput] = useState('');
   const [captchaError, setCaptchaError] = useState('');
   const formLoadTime = useRef(Date.now());
+  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => { setCaptcha(generateCaptcha()); formLoadTime.current = Date.now(); }, []);
+  useEffect(() => { setCaptcha(generateCaptcha()); formLoadTime.current = Date.now(); setMounted(true); }, []);
 
   const refreshCaptcha = () => { setCaptcha(generateCaptcha()); setCaptchaInput(''); setCaptchaError(''); };
 
@@ -95,9 +96,9 @@ export default function ContactForm() {
       <input type="text" name="website" value={formData.website} onChange={(e) => setFormData(p => ({ ...p, website: e.target.value }))} className="absolute -left-[9999px] w-0 h-0 opacity-0" tabIndex={-1} autoComplete="off" aria-hidden="true" />
       <div className="space-y-2 p-3 sm:p-4 bg-slate-50 rounded-xl border border-slate-200">
         <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600"><ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-600" /><span className="font-medium">Verifikasi</span></div>
-        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+      <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           <div className="flex items-center gap-2 bg-white px-3 sm:px-4 py-2 rounded-lg border border-slate-200 shadow-sm">
-            <span className="text-base sm:text-lg font-bold text-slate-800">{captcha.num1} {captcha.operator} {captcha.num2} = ?</span>
+            <span className="text-base sm:text-lg font-bold text-slate-800">{captcha ? `${captcha.num1} ${captcha.operator} ${captcha.num2} = ?` : '... = ?'}</span>
           </div>
           <button type="button" onClick={refreshCaptcha} className="p-2 text-slate-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"><RefreshCw className="w-4 h-4" /></button>
         </div>
@@ -106,7 +107,7 @@ export default function ContactForm() {
         </div>
         {captchaError && <p className="text-red-500 text-[10px] sm:text-xs font-medium">{captchaError}</p>}
       </div>
-      <Button type="submit" disabled={status === 'loading' || status === 'success'} className={`w-full py-5 rounded-xl font-bold gap-2 text-sm sm:text-base h-12 ${status === 'success' ? 'bg-green-600' : 'bg-slate-900 hover:bg-orange-600'}`}>
+      <Button type="submit" disabled={status === 'loading' || status === 'success' || !mounted} className={`w-full py-5 rounded-xl font-bold gap-2 text-sm sm:text-base h-12 ${status === 'success' ? 'bg-green-600' : 'bg-slate-900 hover:bg-orange-600'}`}>
         {status === 'loading' ? <><Loader2 className="w-4 h-4 animate-spin" /> Mengirim...</> : status === 'success' ? <><CheckCircle2 className="w-4 h-4" /> Terkirim!</> : <><Send className="w-4 h-4" /> Kirim Sekarang</>}
       </Button>
       <AnimatePresence>

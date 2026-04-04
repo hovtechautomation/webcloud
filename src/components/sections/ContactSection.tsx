@@ -64,19 +64,22 @@ export default function ContactSection({
     message: '',
     website: '',
   });
-  const [captcha, setCaptcha] = useState(generateCaptcha());
+  const [captcha, setCaptcha] = useState<ReturnType<typeof generateCaptcha> | null>(null);
   const [captchaInput, setCaptchaInput] = useState('');
   const [captchaError, setCaptchaError] = useState('');
   const formLoadTime = useRef(Date.now());
   const [timeError, setTimeError] = useState('');
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setCaptcha(generateCaptcha());
     formLoadTime.current = Date.now();
+    setMounted(true);
   }, []);
 
   const refreshCaptcha = () => {
-    setCaptcha(generateCaptcha());
+    const newCaptcha = generateCaptcha();
+    setCaptcha(newCaptcha);
     setCaptchaInput('');
     setCaptchaError('');
   };
@@ -353,7 +356,7 @@ export default function ContactSection({
                   <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                     <div className="flex items-center gap-2 bg-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-slate-200 shadow-sm">
                       <span className="text-base sm:text-lg font-bold text-slate-800">
-                        {captcha.num1} {captcha.operator} {captcha.num2} = ?
+                        {captcha ? `${captcha.num1} ${captcha.operator} ${captcha.num2} = ?` : '... = ?'}
                       </span>
                     </div>
                     <button
@@ -384,7 +387,7 @@ export default function ContactSection({
 
                 <Button
                   type="submit"
-                  disabled={status === 'loading' || status === 'success'}
+                  disabled={status === 'loading' || status === 'success' || !mounted}
                   className={`w-full py-5 sm:py-6 rounded-xl font-bold gap-2 transition-all text-sm sm:text-base h-12 sm:h-auto ${
                     status === 'success'
                       ? 'bg-green-600 hover:bg-green-600'
