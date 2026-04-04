@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, CheckCircle, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getFirstEntry, getEntries, CONTENT_TYPES, getAssetUrl } from '@/lib/contentful';
+import { getFirstEntry, getEntries, CONTENT_TYPES, getAssetUrl, getFirstImageUrl } from '@/lib/contentful';
 
 export const metadata: Metadata = {
   title: 'Layanan',
@@ -47,7 +47,8 @@ async function getServices() {
         _id: item.sys.id,
         title: (item.fields.title as string) || '',
         description: (item.fields.description as string) || '',
-        imageUrl: getAssetUrl(item.fields.image) || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800&h=600',
+        imageUrl: getFirstImageUrl(item.fields.image) || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800&h=600',
+        icon: (item.fields.icon as string) || undefined,
         features: (item.fields.features as string[]) || [],
         order: (item.fields.order as number) || 0,
       }));

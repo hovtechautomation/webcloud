@@ -1,18 +1,13 @@
 import Image from 'next/image';
-import Link from 'next/link';
+import { CheckCircle } from 'lucide-react';
 
-interface Service {
+export interface Service {
   _id: string;
   title: string;
   slug?: string;
   description: string;
-  image?: {
-    fields: {
-      file: {
-        url: string;
-      };
-    };
-  };
+  imageUrl: string;
+  icon?: string;
   features?: string[];
   order?: number;
 }
@@ -23,64 +18,13 @@ interface ServicesSectionProps {
   services?: Service[];
 }
 
-const defaultServices: Service[] = [
-  {
-    _id: '1',
-    title: 'PLC & Microcontroller',
-    description: 'Pemrograman PLC, SCADA, HMI, dan Microcontroller untuk otomasi industri.',
-    image: {
-      fields: {
-        file: { url: '//images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800&h=600' },
-      },
-    },
-    order: 1,
-  },
-  {
-    _id: '2',
-    title: 'PCB & Hardware Design',
-    description: 'Jasa desain dan pembuatan PCB kustom sesuai kebutuhan project Anda.',
-    image: {
-      fields: {
-        file: { url: '//images.unsplash.com/photo-1517077304055-6e89abbf09b0?auto=format&fit=crop&q=80&w=800&h=600' },
-      },
-    },
-    order: 2,
-  },
-  {
-    _id: '3',
-    title: 'IoT & Smart Systems',
-    description: 'Integrasi sistem IoT untuk monitoring dan kontrol jarak jauh.',
-    image: {
-      fields: {
-        file: { url: '//images.unsplash.com/photo-1558346490-a72e53ae2d4f?auto=format&fit=crop&q=80&w=800&h=600' },
-      },
-    },
-    order: 3,
-  },
-  {
-    _id: '4',
-    title: 'Prototyping & Production',
-    description: 'Jasa pembuatan prototipe perangkat elektronik kustom hingga produksi massal.',
-    image: {
-      fields: {
-        file: { url: '//images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800&h=600' },
-      },
-    },
-    order: 4,
-  },
-];
-
-function getImageUrl(image?: Service['image']): string {
-  if (!image?.fields?.file?.url) return 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800&h=600';
-  const url = image.fields.file.url;
-  return url.startsWith('//') ? `https:${url}` : url;
-}
-
 export default function ServicesSection({
   title = 'Layanan Kami',
   subtitle = 'Menyediakan solusi teknis menyeluruh untuk kebutuhan otomasi dan sistem kontrol Anda.',
-  services = defaultServices,
+  services = [],
 }: ServicesSectionProps) {
+  if (services.length === 0) return null;
+
   return (
     <section id="services" className="py-12 sm:py-16 md:py-24 bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -101,9 +45,19 @@ export default function ServicesSection({
               key={service._id}
               className="group bg-white rounded-xl sm:rounded-2xl overflow-hidden border border-slate-100 hover:shadow-xl transition-all"
             >
+              {/* Icon badge (if available from Contentful) */}
+              {service.icon && (
+                <div className="pt-4 px-4 sm:pt-5 sm:px-5">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600 text-lg sm:text-xl">
+                    {service.icon}
+                  </div>
+                </div>
+              )}
+
+              {/* Image */}
               <div className="aspect-video overflow-hidden relative">
                 <Image
-                  src={getImageUrl(service.image)}
+                  src={service.imageUrl}
                   alt={service.title}
                   fill
                   className="object-cover group-hover:scale-110 transition-transform duration-500"
@@ -111,13 +65,26 @@ export default function ServicesSection({
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                 />
               </div>
+
               <div className="p-4 sm:p-6">
                 <h3 className="text-base sm:text-lg font-bold mb-1.5 sm:mb-2 text-slate-900">
                   {service.title}
                 </h3>
-                <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4">
                   {service.description}
                 </p>
+
+                {/* Features list (if available) */}
+                {service.features && service.features.length > 0 && (
+                  <ul className="space-y-1.5">
+                    {service.features.slice(0, 3).map((feature, idx) => (
+                      <li key={idx} className="flex items-center gap-1.5 sm:gap-2">
+                        <CheckCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-orange-600 flex-shrink-0" />
+                        <span className="text-slate-600 text-xs sm:text-xs leading-tight">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
           ))}

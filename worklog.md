@@ -78,3 +78,23 @@ Stage Summary:
 - Hydration mismatch: RESOLVED (captcha now generates client-side only)
 - DialogContent accessibility warning: RESOLVED (DialogTitle now properly nested inside DialogContent)
 - Files modified: ContactSection.tsx, ContactForm.tsx, command.tsx
+---
+Task ID: 3
+Agent: Main Agent
+Task: Finalize ServicesSection Contentful integration + hydration/DialogContent fixes
+
+Work Log:
+- Synced from GitHub (commit 820e7e2)
+- Confirmed ContactSection.tsx, ContactForm.tsx, command.tsx already have previous fixes applied
+- Rewrote ServicesSection.tsx: exported Service interface, changed image from nested object to imageUrl string, added icon badge support, added features checklist with CheckCircle icons, section returns null when no services
+- Updated page.tsx (homepage): added getServices() fetching from Contentful SERVICE content type, mapped fields (title, description, image via getFirstImageUrl for Array type, icon, features, order), passes services prop to ServicesSection, default fallback 4 services when Contentful empty
+- Updated services/page.tsx: fixed getAssetUrl → getFirstImageUrl for Array-type image field, added icon field mapping
+- Lint: 0 errors (1 unrelated warning in rich-text-renderer.tsx)
+- Dev log: all GET / 200, GET /services 200 — clean
+
+Stage Summary:
+- ServicesSection fully integrated with Contentful CMS
+- Both homepage and /services page fetch from Contentful
+- Default fallback data when Contentful has no entries or returns errors
+- Contentful service model: title, description, image (Array of Assets), icon (Symbol), features (Array of Symbols), order (Integer)
+- All 3 previous fixes (hydration captcha, DialogContent) confirmed working
