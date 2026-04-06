@@ -29,6 +29,7 @@ const defaultCompanyInfo = {
   visi: 'Menjadi perusahaan teknologi terdepan di Indonesia dalam menyediakan solusi otomasi industri dan IoT yang inovatif dan terpercaya.',
   misi: 'Memberikan solusi teknologi yang efisien, handal, dan mudah diimplementasikan untuk meningkatkan produktivitas industri Indonesia.',
   phone: '+62 857-3311-8439',
+  aboutImage: null,
 };
 
 async function getCompanyInfo() {
@@ -51,6 +52,7 @@ async function getCompanyInfo() {
         visi: (entry.fields.visi as string) || defaultCompanyInfo.visi,
         misi: (entry.fields.misi as string) || defaultCompanyInfo.misi,
         phone: (entry.fields.phone as string) || defaultCompanyInfo.phone,
+        aboutImage: entry.fields.aboutImage,
       };
     }
     return defaultCompanyInfo;
@@ -136,6 +138,7 @@ export default async function Home() {
         />
 
         <ProfileSection
+          image={getAssetUrl(companyInfo.aboutImage)}
           projectCount={companyInfo.projectCount}
           visi={companyInfo.visi}
           misi={companyInfo.misi}
