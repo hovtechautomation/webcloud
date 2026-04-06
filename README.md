@@ -223,7 +223,16 @@ bun run db:push
 
 ## Changelog
 
-### v0.3.0 — Update Terbaru
+### v0.4.0 — Update Terbaru
+- ✅ **XSS protection** — Semua user input di-escape sebelum masuk HTML email template (name, subject, message)
+- ✅ **Rate limiting** — IP-based rate limiter: max 5 request/menit ke API kontak, auto-cleanup
+- ✅ **Google Maps API Key** — Di-hardcode → pindah ke `NEXT_PUBLIC_GOOGLE_MAPS_KEY` env var, fallback embed gratis
+- ✅ **Hapus duplicate robots.txt** — Hapus `public/robots.txt`, hanya pakai `src/app/robots.ts`
+- ✅ **Hapus test API endpoint** — Hapus `GET /api` (return "Hello, world!")
+- ✅ **Field length validation** — Max length: name(100), email(254), subject(200), message(5000)
+- ✅ **IP logging di email** — IP pengirim ditampilkan di email notifikasi admin
+
+### v0.3.0
 - ✅ **ServicesSection Contentful integration** — Homepage & /services fetch dari Contentful, fallback 4/6 default services
 - ✅ **aboutImage integration** — Field aboutImage dari Contentful ditampilkan di ProfileSection (1:1 square)
 - ✅ **Hydration mismatch fix** — Captcha Math.random() dipindah ke useEffect (ContactSection + ContactForm)
@@ -263,39 +272,35 @@ bun run db:push
 | 7 | aboutImage integration | ✅ v0.3.0 |
 | 8 | Image ratio 1:1 + gallery horizontal scroll | ✅ v0.3.0 |
 | 9 | Description di hero section | ✅ v0.3.0 |
+| 10 | Google Maps API Key hardcoded | ✅ v0.4.0 |
+| 11 | XSS di email template | ✅ v0.4.0 |
+| 12 | Rate limiting API kontak | ✅ v0.4.0 |
+| 13 | Duplicate robots.txt | ✅ v0.4.0 |
+| 14 | Test API endpoint leftover | ✅ v0.4.0 |
 
 ### Belum Dikerjakan
-
-#### Prioritas Tinggi 🔴
-| # | Issue | File | Keterangan |
-|---|---|---|---|
-| 1 | Google Maps API Key hardcoded | `contact/page.tsx` | Pindahkan ke env var `NEXT_PUBLIC_GOOGLE_MAPS_KEY` |
-| 2 | XSS di email template | `api/contact/route.ts` | Input user tidak di-escape. Gunakan `sanitize-html` |
-| 3 | Tidak ada rate limiting | `api/contact/route.ts` | API kontak rentan spam. Tambahkan rate limiter IP |
 
 #### Prioritas Sedang 🟡
 | # | Issue | Keterangan |
 |---|---|---|
-| 4 | `getCompanyInfo()` duplikat di 8+ file | Ekstrak ke `src/lib/company.ts` |
-| 5 | `ContactForm.tsx` & `ContactSection.tsx` duplikat | ~440 baris form duplikat. Gabungkan |
-| 6 | 3 list client komponen hampir identik | Bisa dijadikan generic `<FilterableGrid>` |
-| 7 | `force-dynamic` + `revalidate = 0` semua halaman | Gunakan ISR `revalidate = 3600` |
-| 8 | Sitemap hanya halaman statis | Artikel, portofolio, produk belum masuk sitemap |
-| 9 | Tidak ada `loading.tsx` | Tidak ada skeleton loading saat navigasi |
-| 10 | Tidak ada `not-found.tsx` | Halaman 404 default Next.js (kurang branding) |
-| 11 | Tidak ada `error.tsx` | Error boundary tidak ada |
+| 1 | `getCompanyInfo()` duplikat di 8+ file | Ekstrak ke `src/lib/company.ts` |
+| 2 | `ContactForm.tsx` & `ContactSection.tsx` duplikat | ~440 baris form duplikat. Gabungkan |
+| 3 | 3 list client komponen hampir identik | Bisa dijadikan generic `<FilterableGrid>` |
+| 4 | `force-dynamic` + `revalidate = 0` semua halaman | Gunakan ISR `revalidate = 3600` |
+| 5 | Sitemap hanya halaman statis | Artikel, portofolio, produk belum masuk sitemap |
+| 6 | Tidak ada `loading.tsx` | Tidak ada skeleton loading saat navigasi |
+| 7 | Tidak ada `not-found.tsx` | Halaman 404 default Next.js (kurang branding) |
+| 8 | Tidak ada `error.tsx` | Error boundary tidak ada |
 
 #### Prioritas Rendah 🟢
 | # | Issue | Keterangan |
 |---|---|---|
-| 12 | ~30 dependency unused | `next-auth`, `next-intl`, `@dnd-kit/*`, `zustand`, dll |
-| 13 | ~29 shadcn/ui components unused | Hanya 7 yang dipakai: button, sheet, input, textarea, label, toast, toaster |
-| 14 | Prisma setup unused | `db.ts`, `prisma/schema.prisma`, `db/custom.db` tidak digunakan |
-| 15 | ESLint rules hampir semua off | Linter tidak menangkap error meaningful |
-| 16 | Dark mode CSS ada tapi tidak bisa diakses | Variabel dark theme ada tapi tidak ada toggle |
-| 17 | Duplicate `robots.txt` | `public/robots.txt` dan `src/app/robots.ts` bentrok |
-| 18 | Test API endpoint leftover | `GET /api` return "Hello, world!" — unused |
-| 19 | `ignoreBuildErrors: true` | TypeScript error di-suppress |
+| 9 | ~30 dependency unused | `next-auth`, `next-intl`, `@dnd-kit/*`, `zustand`, dll |
+| 10 | ~29 shadcn/ui components unused | Hanya 7 yang dipakai: button, sheet, input, textarea, label, toast, toaster |
+| 11 | Prisma setup unused | `db.ts`, `prisma/schema.prisma`, `db/custom.db` tidak digunakan |
+| 12 | ESLint rules hampir semua off | Linter tidak menangkap error meaningful |
+| 13 | Dark mode CSS ada tapi tidak bisa diakses | Variabel dark theme ada tapi tidak ada toggle |
+| 14 | `ignoreBuildErrors: true` | TypeScript error di-suppress |
 
 ---
 
