@@ -11,7 +11,8 @@ import ArticlesSection from '@/components/sections/ArticlesSection';
 import { getCompanyInfo } from '@/lib/company';
 import { getEntries, CONTENT_TYPES, getAssetUrl, getFirstImageUrl } from '@/lib/contentful';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const defaultServices: Service[] = [
   {

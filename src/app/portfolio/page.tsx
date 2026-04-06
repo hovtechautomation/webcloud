@@ -9,7 +9,8 @@ import { getCompanyInfo } from '@/lib/company';
 import { getEntries, CONTENT_TYPES, getAssetUrl } from '@/lib/contentful';
 
 export const metadata: Metadata = { title: 'Portofolio', description: 'Lihat berbagai proyek otomasi industri dan IoT yang telah kami kerjakan.' };
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const defaultPortfolios = [
   { _id: '1', title: 'Sistem Otomasi Pabrik', slug: 'sistem-otomasi-pabrik', excerpt: 'Implementasi sistem otomasi pabrik dengan PLC dan SCADA untuk monitoring real-time.', category: 'PLC & SCADA', imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800&h=600', location: 'Surabaya', year: 2023 },
