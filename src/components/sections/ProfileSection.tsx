@@ -25,7 +25,7 @@ export default function ProfileSection({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Image */}
           <div className="relative order-1 lg:order-none">
-            <div className="aspect-video rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-100 border border-slate-200 shadow-xl relative">
+            <div className="aspect-square rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-100 border border-slate-200 shadow-xl relative">
               <Image
                 src={image}
                 alt="Hovtech Team"
