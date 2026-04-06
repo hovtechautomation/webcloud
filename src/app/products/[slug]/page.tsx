@@ -57,7 +57,10 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <Link href="/products" className="inline-flex items-center gap-2 text-slate-400 hover:text-orange-500 transition-colors mb-4 sm:mb-6 text-sm"><ArrowLeft className="w-4 h-4" /> Kembali ke Produk</Link>
             {category && <span className="inline-block px-3 py-1 bg-orange-500/20 text-orange-500 text-xs font-bold rounded-full mb-3 sm:mb-4">{category}</span>}
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-4">{name}</h1>
-            {price && <p className="text-xl sm:text-2xl font-bold text-orange-500">{price}</p>}
+            {price && <p className="text-xl sm:text-2xl font-bold text-orange-500 mb-3 sm:mb-4">{price}</p>}
+            {description && (
+              <p className="text-slate-300 text-sm sm:text-base max-w-3xl leading-relaxed">{description}</p>
+            )}
           </div>
         </section>
 
@@ -67,13 +70,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             {imageUrl && (
               <div className="aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-slate-100 mb-8 sm:mb-10 relative">
                 <Image src={imageUrl} alt={name} fill className="object-cover" sizes="(max-width: 768px) 100vw, 896px" priority />
-              </div>
-            )}
-
-            {/* Short Description */}
-            {description && (
-              <div className="text-sm sm:text-base leading-relaxed text-slate-600 mb-6 sm:mb-8 border-l-4 border-orange-500 pl-4 sm:pl-6 py-2 bg-orange-50/50 rounded-r-lg">
-                {description}
               </div>
             )}
 
