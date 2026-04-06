@@ -44,7 +44,7 @@ export default async function ProductsPage() {
         </section>
         <ProductListClient products={products} categories={categories} whatsapp={companyInfo.whatsapp} />
       </main>
-      <Footer logo={getAssetUrl(companyInfo.logo)} companyName={companyInfo.name} tagline={companyInfo.tagline} instagram={companyInfo.instagram} />
+      <Footer logo={getAssetUrl(companyInfo.logo)} companyName={companyInfo.name} tagline={companyInfo.tagline} instagram={companyInfo.instagram} facebook={companyInfo.facebook} whatsapp={companyInfo.whatsapp} />
       <FloatingWhatsApp whatsapp={companyInfo.whatsapp} />
     </div>
   );

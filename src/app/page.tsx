@@ -119,6 +119,8 @@ export default async function Home() {
         companyName={companyInfo.name}
         tagline={companyInfo.tagline}
         instagram={companyInfo.instagram}
+        facebook={companyInfo.facebook}
+        whatsapp={companyInfo.whatsapp}
       />
 
       <FloatingWhatsApp whatsapp={companyInfo.whatsapp} />

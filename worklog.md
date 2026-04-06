@@ -63,3 +63,30 @@ Stage Summary:
 - Version bumped to 0.5.0
 - README updated with all Batch 3-5 changes
 - Only 3 low-priority items remaining in roadmap
+
+---
+Task ID: 6
+Agent: Main Agent
+Task: Batch 6 — Critical fixes (font, detail pages, toast, WhatsApp, footer, TypeScript)
+
+Work Log:
+- Fixed font CSS variable: --font-geist-sans → --font-inter (globals.css)
+- Updated 3 detail pages to use getCompanyInfo() from Contentful instead of hardcoded defaults
+- Fixed toast remove delay: 1000000ms (16.7min) → 5000ms (5s)
+- Fixed toast memory leak: useEffect dependency [state] → []
+- Fixed auto-reply WhatsApp hardcoded: moved to WHATSAPP_NUMBER env var with fallback
+- Added Facebook + WhatsApp links to Footer component
+- Updated all 10 pages that render Footer to pass facebook & whatsapp props
+- Removed ignoreBuildErrors: true from next.config.ts
+- Enabled React Strict Mode
+- Fixed 6 TypeScript errors in src/: contact page nullable, captcha null, SheetOverlay import, renderMark type
+- All checks pass: tsc --noEmit 0 errors, ESLint 0 warnings, all 7 pages return 200
+
+Stage Summary:
+- Font now properly applied (Inter)
+- All pages use consistent Contentful company info
+- Toast system no longer leaks memory
+- WhatsApp number configurable via env var
+- Footer now shows Instagram + Facebook + WhatsApp
+- TypeScript strict mode ON (no ignoreBuildErrors)
+- React Strict Mode ON

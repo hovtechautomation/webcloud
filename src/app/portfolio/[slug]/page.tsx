@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { ArrowLeft, MapPin, Calendar, MessageCircle, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getEntryBySlug, CONTENT_TYPES, getAssetUrl, getGalleryUrls, getFirstImageUrl } from '@/lib/contentful';
+import { getCompanyInfo } from '@/lib/company';
 import RichTextRenderer from '@/components/ui/rich-text-renderer';
 
 export const dynamic = 'force-dynamic';
@@ -28,8 +29,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-const defaultCompany = { name: 'HOVTECH', tagline: 'Automation & IoT', logo: null, whatsapp: '6285733118439', instagram: 'https://instagram.com/hovtech.id' };
-
 export default async function PortfolioDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const entry = await getEntryBySlug(CONTENT_TYPES.PORTFOLIO, slug);
@@ -37,7 +36,7 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
   if (!entry?.fields) notFound();
 
   const fields = entry.fields as any;
-  const companyInfo = defaultCompany;
+  const companyInfo = await getCompanyInfo();
   const title = (fields.title as string) || '';
   const category = (fields.category as string) || '';
   const excerpt = (fields.excerpt as string) || '';
@@ -109,7 +108,7 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
           </div>
         </section>
       </main>
-      <Footer logo={getAssetUrl(companyInfo.logo)} companyName={companyInfo.name} tagline={companyInfo.tagline} instagram={companyInfo.instagram} />
+      <Footer logo={getAssetUrl(companyInfo.logo)} companyName={companyInfo.name} tagline={companyInfo.tagline} instagram={companyInfo.instagram} facebook={companyInfo.facebook} whatsapp={companyInfo.whatsapp} />
       <FloatingWhatsApp whatsapp={companyInfo.whatsapp} />
     </div>
   );

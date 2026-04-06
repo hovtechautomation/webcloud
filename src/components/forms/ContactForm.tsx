@@ -41,7 +41,7 @@ export default function ContactForm() {
     if (formData.website) return false;
     if ((Date.now() - formLoadTime.current) / 1000 < 2) return false;
     const userAnswer = parseInt(captchaInput, 10);
-    if (isNaN(userAnswer) || userAnswer !== captcha.answer) { setCaptchaError('Jawaban salah.'); refreshCaptcha(); return false; }
+    if (isNaN(userAnswer) || userAnswer !== (captcha?.answer ?? 0)) { setCaptchaError('Jawaban salah.'); refreshCaptcha(); return false; }
     setCaptchaError('');
     return true;
   };

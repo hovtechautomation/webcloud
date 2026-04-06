@@ -53,6 +53,7 @@ function getResend(): Resend {
 
 const FROM_EMAIL = process.env.FROM_EMAIL || 'info@hovtechautomation.com';
 const TO_EMAIL = process.env.TO_EMAIL || 'info@hovtechautomation.com';
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP || '6285733118439';
 
 // ==================== Input Validation ====================
 const MAX_FIELD_LENGTHS: Record<string, number> = {
@@ -200,7 +201,7 @@ export async function POST(request: NextRequest) {
               Tim kami akan merespons dalam 1x24 jam kerja. Jika Anda memerlukan respons lebih cepat, silakan hubungi kami melalui WhatsApp.
             </p>
             <div style="text-align: center; margin: 20px 0;">
-              <a href="https://wa.me/6285733118439" style="display: inline-block; background: #25d366; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">
+              <a href="https://wa.me/${WHATSAPP_NUMBER}" style="display: inline-block; background: #25d366; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">
                 Hubungi via WhatsApp
               </a>
             </div>

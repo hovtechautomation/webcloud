@@ -2,13 +2,15 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Instagram } from 'lucide-react';
+import { Instagram, Facebook, Phone } from 'lucide-react';
 
 interface FooterProps {
   logo?: string;
   companyName?: string;
   tagline?: string;
   instagram?: string;
+  facebook?: string;
+  whatsapp?: string;
   year?: number;
 }
 
@@ -17,6 +19,8 @@ export default function Footer({
   companyName = 'HOVTECH',
   tagline = 'Automation',
   instagram,
+  facebook,
+  whatsapp,
   year,
 }: FooterProps) {
   const currentYear = year || new Date().getFullYear();
@@ -54,7 +58,7 @@ export default function Footer({
             </div>
           </Link>
 
-          {/* Navigation Links - Better mobile grid */}
+          {/* Navigation Links */}
           <div className="grid grid-cols-3 gap-x-6 gap-y-2 text-xs sm:text-sm font-medium text-slate-500 sm:flex sm:flex-wrap sm:justify-center sm:gap-x-6 sm:gap-y-2">
             {navLinks.map((link) => (
               <Link
@@ -68,8 +72,19 @@ export default function Footer({
           </div>
 
           {/* Social Links */}
-          {instagram && (
-            <div className="flex gap-3">
+          <div className="flex gap-3">
+            {whatsapp && (
+              <a
+                href={`https://wa.me/${whatsapp}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2.5 rounded-full bg-slate-100 hover:bg-green-100 text-slate-600 hover:text-green-600 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                aria-label="WhatsApp"
+              >
+                <Phone className="w-5 h-5" />
+              </a>
+            )}
+            {instagram && (
               <a
                 href={instagram}
                 target="_blank"
@@ -79,11 +94,22 @@ export default function Footer({
               >
                 <Instagram className="w-5 h-5" />
               </a>
-            </div>
-          )}
+            )}
+            {facebook && (
+              <a
+                href={facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2.5 rounded-full bg-slate-100 hover:bg-blue-100 text-slate-600 hover:text-blue-600 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                aria-label="Facebook"
+              >
+                <Facebook className="w-5 h-5" />
+              </a>
+            )}
+          </div>
         </div>
 
-        {/* Copyright - Better mobile layout */}
+        {/* Copyright */}
         <div className="border-t border-slate-100 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
           <p className="text-slate-400 text-[11px] sm:text-xs text-center sm:text-left">
             &copy; {currentYear} PT Hovtech Automation Indonesia. All rights reserved.

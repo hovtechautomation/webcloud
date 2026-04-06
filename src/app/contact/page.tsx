@@ -21,9 +21,9 @@ export default async function ContactPage() {
   const companyInfo = await getCompanyInfo();
 
   const contactInfo = [
-    { icon: '📍', title: 'Alamat', content: companyInfo.address, link: `https://maps.google.com/?q=${encodeURIComponent(companyInfo.address)}` },
-    { icon: '📱', title: 'WhatsApp', content: companyInfo.phone, link: `https://wa.me/${companyInfo.whatsapp}` },
-    { icon: '✉️', title: 'Email', content: companyInfo.email, link: `mailto:${companyInfo.email}` },
+    { icon: '📍', title: 'Alamat', content: companyInfo.address, link: `https://maps.google.com/?q=${encodeURIComponent(companyInfo.address ?? '')}` },
+    { icon: '📱', title: 'WhatsApp', content: companyInfo.phone, link: `https://wa.me/${companyInfo.whatsapp ?? ''}` },
+    { icon: '✉️', title: 'Email', content: companyInfo.email, link: `mailto:${companyInfo.email ?? ''}` },
     { icon: '🕐', title: 'Jam Operasional', content: 'Senin - Jumat: 08:00 - 17:00 WIB', link: null },
   ];
 
@@ -113,13 +113,13 @@ export default async function ContactPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-5 sm:mb-6 text-center">Lokasi Kami</h2>
             <div className="aspect-video rounded-xl sm:rounded-2xl overflow-hidden bg-slate-100">
-              <iframe src={process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ? `https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&q=${encodeURIComponent(companyInfo.address)}` : `https://maps.google.com/maps?q=${encodeURIComponent(companyInfo.address)}&output=embed`} width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" className="rounded-xl sm:rounded-2xl" />
+              <iframe src={process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ? `https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&q=${encodeURIComponent(companyInfo.address ?? '')}` : `https://maps.google.com/maps?q=${encodeURIComponent(companyInfo.address ?? '')}&output=embed`} width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" className="rounded-xl sm:rounded-2xl" />
             </div>
           </div>
         </section>
       </main>
 
-      <Footer logo={getAssetUrl(companyInfo.logo)} companyName={companyInfo.name} tagline={companyInfo.tagline} instagram={companyInfo.instagram} />
+      <Footer logo={getAssetUrl(companyInfo.logo)} companyName={companyInfo.name} tagline={companyInfo.tagline} instagram={companyInfo.instagram} facebook={companyInfo.facebook} whatsapp={companyInfo.whatsapp} />
       <FloatingWhatsApp whatsapp={companyInfo.whatsapp} />
     </div>
   );

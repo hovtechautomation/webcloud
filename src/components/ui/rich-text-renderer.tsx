@@ -1,15 +1,16 @@
 'use client';
 
+import React from 'react';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { Document } from '@contentful/rich-text-types';
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 
 const richTextOptions = {
   renderMark: {
-    [MARKS.BOLD]: (text: string) => <strong className="font-bold text-slate-900">{text}</strong>,
-    [MARKS.ITALIC]: (text: string) => <em className="italic text-slate-700">{text}</em>,
-    [MARKS.UNDERLINE]: (text: string) => <u>{text}</u>,
-    [MARKS.CODE]: (text: string) => (
+    [MARKS.BOLD]: (text: React.ReactNode) => <strong className="font-bold text-slate-900">{text}</strong>,
+    [MARKS.ITALIC]: (text: React.ReactNode) => <em className="italic text-slate-700">{text}</em>,
+    [MARKS.UNDERLINE]: (text: React.ReactNode) => <u>{text}</u>,
+    [MARKS.CODE]: (text: React.ReactNode) => (
       <code className="bg-slate-100 text-orange-600 px-1.5 py-0.5 rounded text-sm font-mono">{text}</code>
     ),
   },

@@ -173,7 +173,7 @@ export default async function ProfilePage() {
         </section>
       </main>
 
-      <Footer logo={getAssetUrl(companyInfo.logo)} companyName={companyInfo.name} tagline={companyInfo.tagline} instagram={companyInfo.instagram} />
+      <Footer logo={getAssetUrl(companyInfo.logo)} companyName={companyInfo.name} tagline={companyInfo.tagline} instagram={companyInfo.instagram} facebook={companyInfo.facebook} whatsapp={companyInfo.whatsapp} />
       <FloatingWhatsApp whatsapp={companyInfo.whatsapp} />
     </div>
   );
