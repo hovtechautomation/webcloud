@@ -5,7 +5,8 @@ import FloatingWhatsApp from '@/components/layout/FloatingWhatsApp';
 import Link from 'next/link';
 import { ArrowLeft, MessageCircle, Mail, Instagram, Facebook } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getFirstEntry, CONTENT_TYPES, getAssetUrl } from '@/lib/contentful';
+import { getCompanyInfo } from '@/lib/company';
+import { getAssetUrl } from '@/lib/contentful';
 import ContactForm from '@/components/forms/ContactForm';
 
 export const metadata: Metadata = {
@@ -13,37 +14,7 @@ export const metadata: Metadata = {
   description: 'Punya pertanyaan atau ingin berdiskusi tentang project? Tim kami siap membantu Anda.',
 };
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
-const defaultCompanyInfo = {
-  name: 'HOVTECH', tagline: 'Automation & IoT', logo: null,
-  whatsapp: '6285733118439', email: 'info@hovtech.id',
-  address: 'Jemur Wonosari Kec Wonocolo Surabaya, Indonesia 60237',
-  phone: '+62 857-3311-8439', instagram: 'https://instagram.com/hovtech.id',
-  facebook: 'https://www.facebook.com/mohrifqi17',
-};
-
-async function getCompanyInfo() {
-  try {
-    const entry = await getFirstEntry(CONTENT_TYPES.COMPANY_INFO);
-    if (entry && entry.fields) {
-      return {
-        ...defaultCompanyInfo,
-        name: (entry.fields.name as string) || defaultCompanyInfo.name,
-        tagline: (entry.fields.tagline as string) || defaultCompanyInfo.tagline,
-        logo: entry.fields.logo,
-        whatsapp: (entry.fields.whatsapp as string) || defaultCompanyInfo.whatsapp,
-        email: (entry.fields.email as string) || defaultCompanyInfo.email,
-        address: (entry.fields.address as string) || defaultCompanyInfo.address,
-        phone: (entry.fields.phone as string) || defaultCompanyInfo.phone,
-        instagram: (entry.fields.instagram as string) || defaultCompanyInfo.instagram,
-        facebook: (entry.fields.facebook as string) || defaultCompanyInfo.facebook,
-      };
-    }
-    return defaultCompanyInfo;
-  } catch { return defaultCompanyInfo; }
-}
+export const revalidate = 3600;
 
 export default async function ContactPage() {
   const companyInfo = await getCompanyInfo();

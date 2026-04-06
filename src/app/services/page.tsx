@@ -6,15 +6,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, CheckCircle, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getFirstEntry, getEntries, CONTENT_TYPES, getAssetUrl, getFirstImageUrl } from '@/lib/contentful';
+import { getCompanyInfo } from '@/lib/company';
+import { getEntries, CONTENT_TYPES, getAssetUrl, getFirstImageUrl } from '@/lib/contentful';
 
 export const metadata: Metadata = {
   title: 'Layanan',
   description: 'Solusi lengkap untuk kebutuhan otomasi, IoT, dan pengembangan sistem industri Anda.',
 };
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 3600;
 
 const defaultServices = [
   { _id: '1', title: 'PLC & Microcontroller', description: 'Pemrograman PLC, SCADA, HMI, dan Microcontroller untuk otomasi industri.', imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800&h=600', features: ['Pemrograman PLC', 'HMI/SCADA', 'Microcontroller', 'Integrasi sistem'], order: 1 },
@@ -24,20 +24,6 @@ const defaultServices = [
   { _id: '5', title: 'Software Development', description: 'Pengembangan aplikasi custom untuk kebutuhan industri.', imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800&h=600', features: ['Desktop app', 'Web application', 'Mobile app'], order: 5 },
   { _id: '6', title: 'Consulting & Training', description: 'Konsultasi teknis dan pelatihan untuk tim engineering.', imageUrl: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=800&h=600', features: ['Technical consulting', 'Training', 'Documentation'], order: 6 },
 ];
-
-const defaultCompanyInfo = {
-  name: 'HOVTECH', tagline: 'Automation & IoT', logo: null, whatsapp: '6285733118439', instagram: 'https://instagram.com/hovtech.id',
-};
-
-async function getCompanyInfo() {
-  try {
-    const entry = await getFirstEntry(CONTENT_TYPES.COMPANY_INFO);
-    if (entry && entry.fields) {
-      return { ...defaultCompanyInfo, name: (entry.fields.name as string) || defaultCompanyInfo.name, tagline: (entry.fields.tagline as string) || defaultCompanyInfo.tagline, logo: entry.fields.logo, whatsapp: (entry.fields.whatsapp as string) || defaultCompanyInfo.whatsapp, instagram: (entry.fields.instagram as string) || defaultCompanyInfo.instagram };
-    }
-    return defaultCompanyInfo;
-  } catch { return defaultCompanyInfo; }
-}
 
 async function getServices() {
   try {

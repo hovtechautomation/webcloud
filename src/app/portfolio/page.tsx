@@ -5,11 +5,11 @@ import FloatingWhatsApp from '@/components/layout/FloatingWhatsApp';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import PortfolioListClient from '@/components/clients/PortfolioListClient';
-import { getFirstEntry, getEntries, CONTENT_TYPES, getAssetUrl } from '@/lib/contentful';
+import { getCompanyInfo } from '@/lib/company';
+import { getEntries, CONTENT_TYPES, getAssetUrl } from '@/lib/contentful';
 
 export const metadata: Metadata = { title: 'Portofolio', description: 'Lihat berbagai proyek otomasi industri dan IoT yang telah kami kerjakan.' };
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 3600;
 
 const defaultPortfolios = [
   { _id: '1', title: 'Sistem Otomasi Pabrik', slug: 'sistem-otomasi-pabrik', excerpt: 'Implementasi sistem otomasi pabrik dengan PLC dan SCADA untuk monitoring real-time.', category: 'PLC & SCADA', imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800&h=600', location: 'Surabaya', year: 2023 },
@@ -19,16 +19,6 @@ const defaultPortfolios = [
   { _id: '5', title: 'Energy Monitoring System', slug: 'energy-monitoring-system', excerpt: 'Sistem monitoring energi berbasis IoT untuk efisiensi pabrik.', category: 'IoT', imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800&h=600', location: 'Jakarta', year: 2023 },
   { _id: '6', title: 'Water Treatment Automation', slug: 'water-treatment-automation', excerpt: 'Otomasi sistem water treatment dengan kontrol PLC terintegrasi.', category: 'PLC & SCADA', imageUrl: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?auto=format&fit=crop&q=80&w=800&h=600', location: 'Surabaya', year: 2021 },
 ];
-
-const defaultCompany = { name: 'HOVTECH', tagline: 'Automation & IoT', logo: null, whatsapp: '6285733118439', instagram: 'https://instagram.com/hovtech.id' };
-
-async function getCompanyInfo() {
-  try {
-    const entry = await getFirstEntry(CONTENT_TYPES.COMPANY_INFO);
-    if (entry?.fields) return { ...defaultCompany, name: (entry.fields.name as string) || defaultCompany.name, tagline: (entry.fields.tagline as string) || defaultCompany.tagline, logo: entry.fields.logo, whatsapp: (entry.fields.whatsapp as string) || defaultCompany.whatsapp, instagram: (entry.fields.instagram as string) || defaultCompany.instagram };
-    return defaultCompany;
-  } catch { return defaultCompany; }
-}
 
 async function getPortfolios() {
   try {

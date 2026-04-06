@@ -98,3 +98,29 @@ Stage Summary:
 - Default fallback data when Contentful has no entries or returns errors
 - Contentful service model: title, description, image (Array of Assets), icon (Symbol), features (Array of Symbols), order (Integer)
 - All 3 previous fixes (hydration captcha, DialogContent) confirmed working
+---
+Task ID: refactor-isr
+Agent: Main Agent
+Task: Refactor HOVTECH pages to use shared getCompanyInfo and ISR
+
+Work Log:
+- Refactored 7 main pages to import `getCompanyInfo` from `@/lib/company` instead of local implementations
+- Removed duplicate `defaultCompanyInfo`/`defaultCompany` objects and local `getCompanyInfo()` functions from all 7 files
+- Removed unused `getFirstEntry` and/or `CONTENT_TYPES` imports where no longer needed
+- Replaced `export const dynamic = 'force-dynamic'` + `export const revalidate = 0` with `export const revalidate = 3600` (ISR) in all 10 files
+- Also updated 3 slug detail pages with ISR cache config
+
+Stage Summary:
+- Files modified (10 total):
+  1. src/app/page.tsx — removed 48 lines (defaultCompanyInfo + getCompanyInfo + cache config)
+  2. src/app/services/page.tsx — removed 14 lines (defaultCompanyInfo + getCompanyInfo + cache config)
+  3. src/app/portfolio/page.tsx — removed 10 lines (defaultCompany + getCompanyInfo + cache config)
+  4. src/app/products/page.tsx — removed 10 lines (defaultCompany + getCompanyInfo + cache config)
+  5. src/app/artikel/page.tsx — removed 10 lines (defaultCompany + getCompanyInfo + cache config)
+  6. src/app/profile/page.tsx — removed 39 lines (defaultCompanyInfo + getCompanyInfo + cache config)
+  7. src/app/contact/page.tsx — removed 29 lines (defaultCompanyInfo + getCompanyInfo + cache config)
+  8. src/app/portfolio/[slug]/page.tsx — ISR cache config only
+  9. src/app/products/[slug]/page.tsx — ISR cache config only
+  10. src/app/artikel/[slug]/page.tsx — ISR cache config only
+- Approximate lines removed (dedup): ~160 lines
+- Lint result: PASS (0 errors, 1 pre-existing warning in rich-text-renderer.tsx unrelated to changes)

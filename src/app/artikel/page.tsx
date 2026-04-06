@@ -5,11 +5,11 @@ import FloatingWhatsApp from '@/components/layout/FloatingWhatsApp';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import ArticleListClient from '@/components/clients/ArticleListClient';
-import { getFirstEntry, getEntries, CONTENT_TYPES, getAssetUrl, getFirstImageUrl } from '@/lib/contentful';
+import { getCompanyInfo } from '@/lib/company';
+import { getEntries, CONTENT_TYPES, getAssetUrl, getFirstImageUrl } from '@/lib/contentful';
 
 export const metadata: Metadata = { title: 'Artikel', description: 'Baca artikel terbaru seputar otomasi industri, IoT, tips & trik, dan kegiatan HOVTECH.' };
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 3600;
 
 const defaultArticles = [
   { _id: '1', title: 'HOVTECH Raih Sertifikasi ISO 9001:2015', slug: 'hovtech-raih-sertifikasi-iso-9001-2015', excerpt: 'PT Hovtech Automation Indonesia berhasil meraih sertifikasi ISO 9001:2015.', imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800&h=600', category: 'Berita', publishedAt: '2024-01-15', featured: true },
@@ -19,16 +19,6 @@ const defaultArticles = [
   { _id: '5', title: 'Workshop Otomasi Industri', slug: 'workshop-otomasi-industri', excerpt: 'HOVTECH mengadakan workshop otomasi industri untuk mahasiswa teknik.', imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800&h=600', category: 'Kegiatan', publishedAt: '2023-12-15', featured: false },
   { _id: '6', title: 'Proyek SCADA Terbesar HOVTECH', slug: 'proyek-scada-terbesar-hovtech', excerpt: 'HOVTECH berhasil menyelesaikan proyek SCADA terbesar di Jawa Timur.', imageUrl: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?auto=format&fit=crop&q=80&w=800&h=600', category: 'Berita', publishedAt: '2023-12-10', featured: true },
 ];
-
-const defaultCompany = { name: 'HOVTECH', tagline: 'Automation & IoT', logo: null, whatsapp: '6285733118439', instagram: 'https://instagram.com/hovtech.id' };
-
-async function getCompanyInfo() {
-  try {
-    const entry = await getFirstEntry(CONTENT_TYPES.COMPANY_INFO);
-    if (entry?.fields) return { ...defaultCompany, name: (entry.fields.name as string) || defaultCompany.name, tagline: (entry.fields.tagline as string) || defaultCompany.tagline, logo: entry.fields.logo, whatsapp: (entry.fields.whatsapp as string) || defaultCompany.whatsapp, instagram: (entry.fields.instagram as string) || defaultCompany.instagram };
-    return defaultCompany;
-  } catch { return defaultCompany; }
-}
 
 async function getArticles() {
   try {

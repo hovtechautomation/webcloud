@@ -6,7 +6,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, Target, Eye, Users, Award, Briefcase, GraduationCap, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getFirstEntry, getEntries, CONTENT_TYPES, getAssetUrl } from '@/lib/contentful';
+import { getCompanyInfo } from '@/lib/company';
+import { getEntries, CONTENT_TYPES, getAssetUrl } from '@/lib/contentful';
 import ClientsPartnersSection from '@/components/sections/ClientsPartnersSection';
 
 export const metadata: Metadata = {
@@ -14,8 +15,7 @@ export const metadata: Metadata = {
   description: 'Mengenal lebih dekat PT Hovtech Automation Indonesia - solusi otomasi industri terpercaya.',
 };
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 3600;
 
 const defaultMilestones = [
   { _id: '1', year: '2018', title: 'Pendirian Perusahaan', description: 'HOVTECH didirikan dengan fokus pada solusi otomasi industri.' },
@@ -25,45 +25,6 @@ const defaultMilestones = [
   { _id: '5', year: '2022', title: 'Sertifikasi ISO', description: 'Mendapatkan sertifikasi ISO 9001:2015 untuk sistem manajemen mutu.' },
   { _id: '6', year: '2023', title: 'Ekspansi Regional', description: 'Memperluas layanan ke seluruh Indonesia dan Asia Tenggara.' },
 ];
-
-const defaultCompanyInfo = {
-  name: 'HOVTECH',
-  tagline: 'Automation & IoT',
-  description: 'PT Hovtech Automation Indonesia adalah perusahaan yang bergerak di bidang solusi otomasi industri dan Internet of Things (IoT).',
-  logo: null,
-  whatsapp: '6285733118439',
-  email: 'info@hovtech.id',
-  instagram: 'https://instagram.com/hovtech.id',
-  projectCount: 200,
-  clientCount: 50,
-  teamSize: 25,
-  visi: 'Menjadi perusahaan teknologi terdepan di Indonesia dalam menyediakan solusi otomasi industri dan IoT yang inovatif dan terpercaya.',
-  misi: 'Memberikan solusi teknologi yang efisien, handal, dan mudah diimplementasikan untuk meningkatkan produktivitas industri Indonesia.',
-  phone: '+62 857-3311-8439',
-};
-
-async function getCompanyInfo() {
-  try {
-    const entry = await getFirstEntry(CONTENT_TYPES.COMPANY_INFO);
-    if (entry && entry.fields) {
-      return {
-        ...defaultCompanyInfo,
-        name: (entry.fields.name as string) || defaultCompanyInfo.name,
-        tagline: (entry.fields.tagline as string) || defaultCompanyInfo.tagline,
-        description: (entry.fields.description as string) || defaultCompanyInfo.description,
-        logo: entry.fields.logo,
-        whatsapp: (entry.fields.whatsapp as string) || defaultCompanyInfo.whatsapp,
-        instagram: (entry.fields.instagram as string) || defaultCompanyInfo.instagram,
-        projectCount: (entry.fields.projectCount as number) ?? defaultCompanyInfo.projectCount,
-        clientCount: (entry.fields.clientCount as number) ?? defaultCompanyInfo.clientCount,
-        teamSize: (entry.fields.teamSize as number) ?? defaultCompanyInfo.teamSize,
-        visi: (entry.fields.visi as string) || defaultCompanyInfo.visi,
-        misi: (entry.fields.misi as string) || defaultCompanyInfo.misi,
-      };
-    }
-    return defaultCompanyInfo;
-  } catch { return defaultCompanyInfo; }
-}
 
 async function getMilestones() {
   try {

@@ -10,8 +10,7 @@ import { Button } from '@/components/ui/button';
 import { getEntryBySlug, CONTENT_TYPES, getAssetUrl, getGalleryUrls, getFirstImageUrl } from '@/lib/contentful';
 import RichTextRenderer from '@/components/ui/rich-text-renderer';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 3600;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;

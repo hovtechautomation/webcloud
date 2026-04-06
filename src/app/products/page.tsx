@@ -5,27 +5,17 @@ import FloatingWhatsApp from '@/components/layout/FloatingWhatsApp';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import ProductListClient from '@/components/clients/ProductListClient';
-import { getFirstEntry, getEntries, CONTENT_TYPES, getAssetUrl } from '@/lib/contentful';
+import { getCompanyInfo } from '@/lib/company';
+import { getEntries, CONTENT_TYPES, getAssetUrl } from '@/lib/contentful';
 
 export const metadata: Metadata = { title: 'Produk', description: 'Temukan berbagai produk otomasi industri, PLC, IoT Gateway, dan sensor.' };
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 3600;
 
 const defaultProducts = [
   { _id: '1', name: 'PLC Controller HVT-100', slug: 'plc-controller-hvt-100', description: 'PLC controller dengan 16 I/O digital.', price: 'Rp 2.500.000', category: 'PLC', imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800&h=600', features: ['16 I/O Digital', 'Modbus RTU/TCP', 'Garansi 2 Tahun'] },
   { _id: '2', name: 'IoT Gateway HVT-GW01', slug: 'iot-gateway-hvt-gw01', description: 'Gateway IoT untuk industri dengan konektivitas lengkap.', price: 'Rp 1.800.000', category: 'IoT', imageUrl: 'https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?auto=format&fit=crop&q=80&w=800&h=600', features: ['WiFi & Ethernet', 'MQTT', 'Edge Computing'] },
   { _id: '3', name: 'Sensor Suhu Industrial', slug: 'sensor-suhu-industrial', description: 'Sensor suhu PT100 untuk aplikasi industri.', price: 'Rp 450.000', category: 'Sensor', imageUrl: 'https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?auto=format&fit=crop&q=80&w=800&h=600', features: ['PT100', '4-20mA Output', 'IP65 Rating'] },
 ];
-
-const defaultCompany = { name: 'HOVTECH', tagline: 'Automation & IoT', logo: null, whatsapp: '6285733118439', instagram: 'https://instagram.com/hovtech.id' };
-
-async function getCompanyInfo() {
-  try {
-    const entry = await getFirstEntry(CONTENT_TYPES.COMPANY_INFO);
-    if (entry?.fields) return { ...defaultCompany, name: (entry.fields.name as string) || defaultCompany.name, tagline: (entry.fields.tagline as string) || defaultCompany.tagline, logo: entry.fields.logo, whatsapp: (entry.fields.whatsapp as string) || defaultCompany.whatsapp, instagram: (entry.fields.instagram as string) || defaultCompany.instagram };
-    return defaultCompany;
-  } catch { return defaultCompany; }
-}
 
 async function getProducts() {
   try {
