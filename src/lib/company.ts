@@ -17,6 +17,7 @@ export interface CompanyInfo {
   visi?: string;
   misi?: string;
   aboutImage?: any;
+  profileImage?: any;
 }
 
 const defaultCompanyInfo: CompanyInfo = {
@@ -36,6 +37,7 @@ const defaultCompanyInfo: CompanyInfo = {
   visi: 'Menjadi perusahaan teknologi terdepan di Indonesia dalam menyediakan solusi otomasi industri dan IoT yang inovatif dan terpercaya.',
   misi: 'Memberikan solusi teknologi yang efisien, handal, dan mudah diimplementasikan untuk meningkatkan produktivitas industri Indonesia.',
   aboutImage: null,
+  profileImage: null,
 };
 
 export async function getCompanyInfo(): Promise<CompanyInfo> {
@@ -60,6 +62,7 @@ export async function getCompanyInfo(): Promise<CompanyInfo> {
         visi: (entry.fields.visi as string) || defaultCompanyInfo.visi,
         misi: (entry.fields.misi as string) || defaultCompanyInfo.misi,
         aboutImage: entry.fields.aboutImage,
+        profileImage: entry.fields.profileImage,
       };
     }
     return defaultCompanyInfo;

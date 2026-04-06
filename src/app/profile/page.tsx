@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { ArrowLeft, Target, Eye, Users, Award, Briefcase, GraduationCap, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getCompanyInfo } from '@/lib/company';
-import { getEntries, CONTENT_TYPES, getAssetUrl } from '@/lib/contentful';
+import { getEntries, CONTENT_TYPES, getAssetUrl, getFirstImageUrl } from '@/lib/contentful';
 import ClientsPartnersSection from '@/components/sections/ClientsPartnersSection';
 
 export const metadata: Metadata = {
@@ -80,7 +80,13 @@ export default async function ProfilePage() {
               </div>
               <div className="relative">
                 <div className="aspect-video rounded-xl sm:rounded-2xl overflow-hidden bg-slate-100 relative">
-                  <Image src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800&h=600" alt="HOVTECH" fill className="object-cover" />
+                  {(() => {
+                    const profileImg = getFirstImageUrl(companyInfo.profileImage);
+                    const aboutImg = getFirstImageUrl(companyInfo.aboutImage);
+                    const fallback = 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800&h=600';
+                    const src = profileImg || aboutImg || fallback;
+                    return <Image src={src} alt="Profil HOVTECH" fill className="object-cover" />;
+                  })()}
                 </div>
               </div>
             </div>
