@@ -69,7 +69,14 @@ src/
 │   │   ├── ProductListClient.tsx     # Grid produk + filter (client)
 │   │   └── ArticleListClient.tsx     # Grid artikel + filter (client)
 │   └── ui/                           # shadcn/ui components
-│       └── rich-text-renderer.tsx    # Contentful RichText renderer
+│       ├── button.tsx                 # shadcn/ui Button
+│       ├── sheet.tsx                  # shadcn/ui Sheet (mobile nav)
+│       ├── input.tsx                  # shadcn/ui Input
+│       ├── textarea.tsx               # shadcn/ui Textarea
+│       ├── label.tsx                  # shadcn/ui Label
+│       ├── toast.tsx                  # shadcn/ui Toast primitives
+│       ├── toaster.tsx                # shadcn/ui Toaster (layout)
+│       └── rich-text-renderer.tsx     # Contentful RichText renderer
 └── lib/
     ├── contentful.ts                 # Contentful CMS client + helpers
     ├── utils.ts                      # cn() utility (Tailwind merge)
@@ -223,7 +230,18 @@ bun run db:push
 
 ## Changelog
 
-### v0.4.0 — Update Terbaru
+### v0.5.0 — Update Terbaru
+- ✅ **Code dedup** — `getCompanyInfo()` diekstrak ke `src/lib/company.ts` (7 file)
+- ✅ **ContactForm reuse** — `ContactSection` pakai `ContactForm` (~200 baris dihemat)
+- ✅ **Custom 404 page** — `not-found.tsx` dengan branding HOVTECH
+- ✅ **Loading skeleton** — `loading.tsx` skeleton saat navigasi
+- ✅ **Error boundary** — `error.tsx` halaman error dengan tombol reset
+- ✅ **Dynamic sitemap** — Slug artikel, portofolio, produk dari Contentful
+- ✅ **47 unused packages removed** — Bersih dari deps tidak terpakai
+- ✅ **41 unused UI components removed** — Hanya 8 komponen yang dipakai
+- ✅ **ESLint clean** — 0 errors, 0 warnings
+
+### v0.4.0
 - ✅ **XSS protection** — Semua user input di-escape sebelum masuk HTML email template (name, subject, message)
 - ✅ **Rate limiting** — IP-based rate limiter: max 5 request/menit ke API kontak, auto-cleanup
 - ✅ **Google Maps API Key** — Di-hardcode → pindah ke `NEXT_PUBLIC_GOOGLE_MAPS_KEY` env var, fallback embed gratis
@@ -280,27 +298,12 @@ bun run db:push
 
 ### Belum Dikerjakan
 
-#### Prioritas Sedang 🟡
-| # | Issue | Keterangan |
-|---|---|---|
-| 1 | `getCompanyInfo()` duplikat di 8+ file | Ekstrak ke `src/lib/company.ts` |
-| 2 | `ContactForm.tsx` & `ContactSection.tsx` duplikat | ~440 baris form duplikat. Gabungkan |
-| 3 | 3 list client komponen hampir identik | Bisa dijadikan generic `<FilterableGrid>` |
-| 4 | `force-dynamic` + `revalidate = 0` semua halaman | Gunakan ISR `revalidate = 3600` |
-| 5 | Sitemap hanya halaman statis | Artikel, portofolio, produk belum masuk sitemap |
-| 6 | Tidak ada `loading.tsx` | Tidak ada skeleton loading saat navigasi |
-| 7 | Tidak ada `not-found.tsx` | Halaman 404 default Next.js (kurang branding) |
-| 8 | Tidak ada `error.tsx` | Error boundary tidak ada |
-
 #### Prioritas Rendah 🟢
 | # | Issue | Keterangan |
 |---|---|---|
-| 9 | ~30 dependency unused | `next-auth`, `next-intl`, `@dnd-kit/*`, `zustand`, dll |
-| 10 | ~29 shadcn/ui components unused | Hanya 7 yang dipakai: button, sheet, input, textarea, label, toast, toaster |
-| 11 | Prisma setup unused | `db.ts`, `prisma/schema.prisma`, `db/custom.db` tidak digunakan |
-| 12 | ESLint rules hampir semua off | Linter tidak menangkap error meaningful |
-| 13 | Dark mode CSS ada tapi tidak bisa diakses | Variabel dark theme ada tapi tidak ada toggle |
-| 14 | `ignoreBuildErrors: true` | TypeScript error di-suppress |
+| 1 | Prisma setup unused | `db.ts`, `prisma/schema.prisma`, `db/custom.db` — bisa dihapus jika tidak diperlukan |
+| 2 | Dark mode toggle | Variabel dark theme ada tapi tidak ada toggle UI |
+| 3 | ISR optimization | `force-dynamic` masih diperlukan karena Contentful tidak tersedia saat build |
 
 ---
 

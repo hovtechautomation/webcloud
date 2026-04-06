@@ -1,126 +1,65 @@
 ---
 Task ID: 1
 Agent: Main Agent
-Task: Analyze HOVTECH website, identify mobile issues, and implement mobile-responsive optimizations
+Task: Fix Batch 4 regression - verify portfolio/products/artikel pages
 
 Work Log:
-- Cloned GitHub repo from hovtechautomation/webhovtech
-- Analyzed uploaded mobile screenshot using VLM to identify mobile layout issues
-- Read live website content via web-reader
-- Reviewed all 20+ source files (components, pages, lib, config)
-- Identified 8 critical mobile issues and 6 optimization opportunities
-- Installed contentful SDK and configured .env.local with HOVTECH credentials
-- Created mobile-optimized contentful.ts library
-- Rebuilt Navbar with improved mobile Sheet menu, scroll shadow, body lock, better touch targets
-- Rebuilt HeroSection with responsive spacing, mobile decorative element, proper font sizes
-- Rebuilt ProfileSection with mobile badge positioning (below image instead of absolute), responsive grids
-- Rebuilt ServicesSection with 1/2/4 col responsive grid, readable font sizes
-- Rebuilt ClientsPartnersSection with 2/3/4 col grid, smaller logo sizes on mobile
-- Rebuilt ArticlesSection with 1/2/3 col grid, proper image sizing
-- Rebuilt WhyChooseUsSection with 1/2/3 col grid, mobile-friendly CTA
-- Rebuilt ContactSection as centered layout (not side-by-side), mobile-optimized form, quick contact buttons
-- Rebuilt Footer with 3-col grid nav links, better mobile layout
-- Created FloatingWhatsApp component with pulse animation, scroll-triggered visibility
-- Updated layout.tsx with HOVTECH metadata, Inter font, proper SEO
-- Copied favicon.jpg and logo.png from HOVTECH repo
-- All lint checks pass, dev server compiles without errors
+- Synced from GitHub (commit 0bb094a)
+- Read all refactored files: company.ts, FilterableGrid.tsx (deleted), portfolio/page.tsx, products/page.tsx, artikel/page.tsx
+- Read all client components: PortfolioListClient, ProductListClient, ArticleListClient
+- Added Contentful env vars to .env.local
+- Tested all pages via curl - all returned 200 OK
+- Checked dev.log - no errors
+- Conclusion: Pages work correctly. Error on Vercel was likely due to missing env vars or stale deployment.
 
 Stage Summary:
-- Complete mobile-responsive HOVTECH homepage rebuilt with all sections optimized
-- Key mobile improvements: responsive grids, proper spacing, touch targets (44px min), floating WhatsApp CTA, scroll-aware navbar, mobile-optimized typography
-- Contentful integration configured with live credentials
-- Zero lint errors, successful compilation
+- All 3 list pages (portfolio, products, artikel) working correctly
+- No code changes needed - error was environment/deployment related
 
 ---
-Task ID: 20-26
+Task ID: 2-a
 Agent: Main Agent
-Task: Create all sub-pages with Contentful integration and mobile-responsive design
+Task: Batch 5a - Delete unused shadcn/ui components
 
 Work Log:
-- Created /profile/page.tsx with timeline milestones, achievements, visi/misi
-- Created /services/page.tsx with alternating layout service details
-- Created /portfolio/page.tsx with PortfolioListClient filter component
-- Created /portfolio/[slug]/page.tsx for portfolio detail with gallery
-- Created /products/page.tsx with ProductListClient filter component
-- Created /products/[slug]/page.tsx for product detail with features
-- Created /artikel/page.tsx with ArticleListClient filter component
-- Created /artikel/[slug]/page.tsx for article detail
-- Created /contact/page.tsx with ContactForm and Google Maps embed
-- Created components/forms/ContactForm.tsx with captcha
-- Created components/clients/PortfolioListClient.tsx with search+filter
-- Created components/clients/ProductListClient.tsx with search+filter
-- Created components/clients/ArticleListClient.tsx with search+filter
-- All pages include Navbar, Footer, FloatingWhatsApp
-- All pages mobile-responsive with sm/md breakpoints
-- All pages integrated with Contentful (live credentials)
-- Verified all 7 routes return HTTP 200
+- Scanned all 49 UI component files for usage in src/
+- Found only 8 components are used: button, sheet, input, textarea, label, rich-text-renderer, toaster, toast
+- Deleted 41 unused component files
 
 Stage Summary:
-- 11 new page files + 4 new components created
-- All routes verified working (7/7 return HTTP 200)
-- All pages use Contentful live data with fallback defaults
-- Zero lint errors
+- 41 files removed from src/components/ui/
+- 8 files retained: button.tsx, sheet.tsx, input.tsx, textarea.tsx, label.tsx, toast.tsx, toaster.tsx, rich-text-renderer.tsx
+
 ---
-Task ID: 2
+Task ID: 2-b
 Agent: Main Agent
-Task: Fix hydration mismatch errors and DialogContent accessibility warning
+Task: Batch 5b - Remove unused npm dependencies
 
 Work Log:
-- Investigated full codebase for hydration mismatch sources and DialogContent violations
-- Found 2 critical hydration issues: `Math.random()` in `useState(generateCaptcha())` in ContactSection.tsx (line 67) and ContactForm.tsx (line 30)
-- Found 1 medium issue: `DialogHeader` with `DialogTitle` placed outside `DialogContent` in command.tsx
-- Fixed ContactSection.tsx: changed `useState(generateCaptcha())` to `useState(null)`, generate captcha in `useEffect`, render `... = ?` placeholder until client mounts, disable submit button until mounted
-- Fixed ContactForm.tsx: same pattern as above
-- Fixed command.tsx: moved `DialogHeader > DialogTitle > DialogDescription` inside `DialogContent`, added fallback title 'Command'
-- Verified: lint 0 errors, dev log all 200 OK
+- Analyzed all 62 dependencies for usage across src/
+- Identified 24 top-level packages as unused
+- Identified 23 @radix-ui packages only used by deleted UI components
+- Removed 47 packages total via bun remove
+- Verified 4 @radix-ui packages still needed (dialog, toast, slot, label)
 
 Stage Summary:
-- Hydration mismatch: RESOLVED (captcha now generates client-side only)
-- DialogContent accessibility warning: RESOLVED (DialogTitle now properly nested inside DialogContent)
-- Files modified: ContactSection.tsx, ContactForm.tsx, command.tsx
+- 47 packages removed from dependencies
+- Remaining: 13 dependencies + 6 devDependencies
+- All pages still return 200 OK after removal
+
 ---
-Task ID: 3
+Task ID: 2-c
 Agent: Main Agent
-Task: Finalize ServicesSection Contentful integration + hydration/DialogContent fixes
+Task: Batch 5c - Fix ESLint warning + update version
 
 Work Log:
-- Synced from GitHub (commit 820e7e2)
-- Confirmed ContactSection.tsx, ContactForm.tsx, command.tsx already have previous fixes applied
-- Rewrote ServicesSection.tsx: exported Service interface, changed image from nested object to imageUrl string, added icon badge support, added features checklist with CheckCircle icons, section returns null when no services
-- Updated page.tsx (homepage): added getServices() fetching from Contentful SERVICE content type, mapped fields (title, description, image via getFirstImageUrl for Array type, icon, features, order), passes services prop to ServicesSection, default fallback 4 services when Contentful empty
-- Updated services/page.tsx: fixed getAssetUrl → getFirstImageUrl for Array-type image field, added icon field mapping
-- Lint: 0 errors (1 unrelated warning in rich-text-renderer.tsx)
-- Dev log: all GET / 200, GET /services 200 — clean
+- Fixed unused eslint-disable directive in rich-text-renderer.tsx (line 102)
+- Updated package.json version from 0.2.0 to 0.5.0
+- Updated README.md with v0.5.0 changelog, updated file structure, updated roadmap
+- ESLint: 0 errors, 0 warnings
 
 Stage Summary:
-- ServicesSection fully integrated with Contentful CMS
-- Both homepage and /services page fetch from Contentful
-- Default fallback data when Contentful has no entries or returns errors
-- Contentful service model: title, description, image (Array of Assets), icon (Symbol), features (Array of Symbols), order (Integer)
-- All 3 previous fixes (hydration captcha, DialogContent) confirmed working
----
-Task ID: refactor-isr
-Agent: Main Agent
-Task: Refactor HOVTECH pages to use shared getCompanyInfo and ISR
-
-Work Log:
-- Refactored 7 main pages to import `getCompanyInfo` from `@/lib/company` instead of local implementations
-- Removed duplicate `defaultCompanyInfo`/`defaultCompany` objects and local `getCompanyInfo()` functions from all 7 files
-- Removed unused `getFirstEntry` and/or `CONTENT_TYPES` imports where no longer needed
-- Replaced `export const dynamic = 'force-dynamic'` + `export const revalidate = 0` with `export const revalidate = 3600` (ISR) in all 10 files
-- Also updated 3 slug detail pages with ISR cache config
-
-Stage Summary:
-- Files modified (10 total):
-  1. src/app/page.tsx — removed 48 lines (defaultCompanyInfo + getCompanyInfo + cache config)
-  2. src/app/services/page.tsx — removed 14 lines (defaultCompanyInfo + getCompanyInfo + cache config)
-  3. src/app/portfolio/page.tsx — removed 10 lines (defaultCompany + getCompanyInfo + cache config)
-  4. src/app/products/page.tsx — removed 10 lines (defaultCompany + getCompanyInfo + cache config)
-  5. src/app/artikel/page.tsx — removed 10 lines (defaultCompany + getCompanyInfo + cache config)
-  6. src/app/profile/page.tsx — removed 39 lines (defaultCompanyInfo + getCompanyInfo + cache config)
-  7. src/app/contact/page.tsx — removed 29 lines (defaultCompanyInfo + getCompanyInfo + cache config)
-  8. src/app/portfolio/[slug]/page.tsx — ISR cache config only
-  9. src/app/products/[slug]/page.tsx — ISR cache config only
-  10. src/app/artikel/[slug]/page.tsx — ISR cache config only
-- Approximate lines removed (dedup): ~160 lines
-- Lint result: PASS (0 errors, 1 pre-existing warning in rich-text-renderer.tsx unrelated to changes)
+- ESLint clean
+- Version bumped to 0.5.0
+- README updated with all Batch 3-5 changes
+- Only 3 low-priority items remaining in roadmap

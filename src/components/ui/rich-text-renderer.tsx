@@ -99,7 +99,6 @@ const richTextOptions = {
       if (!url) return null;
       return (
         <figure className="my-6 sm:my-8">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={url.startsWith('//') ? `https:${url}` : url}
             alt={alt}
