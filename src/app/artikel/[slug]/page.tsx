@@ -71,7 +71,7 @@ export default async function ArtikelDetailPage({ params }: { params: Promise<{ 
         <section className="py-8 sm:py-10 md:py-16">
           <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             {imageUrl && (
-              <div className="aspect-video rounded-xl sm:rounded-2xl overflow-hidden bg-slate-100 mb-8 sm:mb-10 relative">
+              <div className="aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-slate-100 mb-8 sm:mb-10 relative">
                 <Image src={imageUrl} alt={title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 768px" priority />
               </div>
             )}

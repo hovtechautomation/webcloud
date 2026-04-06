@@ -71,8 +71,8 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
         <section className="py-10 sm:py-12 md:py-16">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             {imageUrl && (
-              <div className="aspect-video rounded-xl sm:rounded-2xl overflow-hidden bg-slate-100 mb-8 sm:mb-10 relative">
-                <Image src={imageUrl} alt={title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 896px" priority />
+              <div className="aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-slate-100 mb-8 sm:mb-10 relative">
+                <Image src={imageUrl} alt={title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 768px" priority />
               </div>
             )}
 
@@ -89,13 +89,14 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
                 <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6 flex items-center gap-2">
                   <FileText className="w-5 h-5 text-orange-600" /> Galeri
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-thin -mx-4 px-4 sm:mx-0 sm:px-0">
                   {galleryUrls.map((url, i) => (
-                    <div key={i} className="aspect-video rounded-xl overflow-hidden bg-slate-100 relative">
-                      <Image src={url} alt={`${title} - ${i + 1}`} fill className="object-cover" sizes="(max-width: 640px) 100vw, 50vw" />
+                    <div key={i} className="flex-shrink-0 w-48 sm:w-56 md:w-64 aspect-square rounded-xl overflow-hidden bg-slate-100 relative snap-start">
+                      <Image src={url} alt={`${title} - ${i + 1}`} fill className="object-cover hover:scale-105 transition-transform duration-300" sizes="256px" />
                     </div>
                   ))}
                 </div>
+                <p className="text-xs text-slate-400 mt-2 text-center sm:text-left">Geser ke kanan untuk melihat lebih banyak &rarr;</p>
               </div>
             )}
 
