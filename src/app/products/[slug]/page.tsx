@@ -107,13 +107,14 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6 flex items-center gap-2">
                   <FileText className="w-5 h-5 text-orange-600" /> Galeri Produk
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-thin -mx-4 px-4 sm:mx-0 sm:px-0">
                   {galleryUrls.map((url, i) => (
-                    <div key={i} className="aspect-video rounded-xl overflow-hidden bg-slate-100 relative">
-                      <Image src={url} alt={`${name} - ${i + 1}`} fill className="object-cover" sizes="(max-width: 640px) 100vw, 50vw" />
+                    <div key={i} className="flex-shrink-0 w-48 sm:w-56 md:w-64 aspect-square rounded-xl overflow-hidden bg-slate-100 relative snap-start">
+                      <Image src={url} alt={`${name} - ${i + 1}`} fill className="object-cover hover:scale-105 transition-transform duration-300" sizes="256px" />
                     </div>
                   ))}
                 </div>
+                <p className="text-xs text-slate-400 mt-2 text-center sm:text-left">Geser ke kanan untuk melihat lebih banyak &rarr;</p>
               </div>
             )}
 
