@@ -30,21 +30,21 @@ Website resmi **PT Hovtech Automation Indonesia** — Solusi Otomasi Industri & 
 src/
 ├── app/
 │   ├── layout.tsx                    # Root layout (font, metadata, Toaster)
-│   ├── page.tsx                      # Homepage (8 section)
+│   ├── page.tsx                      # Homepage (Contentful-driven sections)
 │   ├── globals.css                   # Tailwind v4 + CSS variables
 │   ├── robots.ts                     # Dynamic robots.txt generator
 │   ├── sitemap.ts                    # Static sitemap (7 halaman)
 │   ├── profile/page.tsx              # Profil perusahaan + timeline
-│   ├── services/page.tsx             # Daftar layanan
+│   ├── services/page.tsx             # Daftar layanan (Contentful + default)
 │   ├── portfolio/
 │   │   ├── page.tsx                  # Daftar portofolio + filter
-│   │   └── [slug]/page.tsx           # Detail portofolio (dynamic)
+│   │   └── [slug]/page.tsx           # Detail portofolio + galeri horizontal scroll
 │   ├── products/
 │   │   ├── page.tsx                  # Daftar produk + filter
-│   │   └── [slug]/page.tsx           # Detail produk (dynamic)
+│   │   └── [slug]/page.tsx           # Detail produk + galeri horizontal scroll
 │   ├── artikel/
 │   │   ├── page.tsx                  # Daftar artikel + filter
-│   │   └── [slug]/page.tsx           # Detail artikel (dynamic)
+│   │   └── [slug]/page.tsx           # Detail artikel + RichText
 │   ├── contact/page.tsx              # Kontak + form + peta + sosmed
 │   └── api/
 │       └── contact/route.ts          # API kirim email via Resend
@@ -55,10 +55,10 @@ src/
 │   │   └── FloatingWhatsApp.tsx      # Tombol WhatsApp melayang
 │   ├── sections/
 │   │   ├── HeroSection.tsx           # Hero banner + statistik
-│   │   ├── ProfileSection.tsx        # Profil ringkas + visi misi
-│   │   ├── ServicesSection.tsx       # Layanan utama
+│   │   ├── ProfileSection.tsx        # Profil + visi misi + aboutImage (1:1)
+│   │   ├── ServicesSection.tsx       # Layanan (Contentful + fallback)
 │   │   ├── ClientsPartnersSection.tsx        # Klien & partner (server)
-│   │   ├── ClientsPartnersSectionClient.tsx  # Klien & partner auto-scroll (client)
+│   │   ├── ClientsPartnersSectionClient.tsx  # Auto-scroll horizontal (client)
 │   │   ├── ArticlesSection.tsx       # Artikel terbaru
 │   │   ├── WhyChooseUsSection.tsx    # Keunggulan perusahaan
 │   │   └── ContactSection.tsx        # Form kontak + info + sosmed
@@ -68,7 +68,8 @@ src/
 │   │   ├── PortfolioListClient.tsx   # Grid portofolio + filter (client)
 │   │   ├── ProductListClient.tsx     # Grid produk + filter (client)
 │   │   └── ArticleListClient.tsx     # Grid artikel + filter (client)
-│   └── ui/                           # ~35 shadcn/ui components
+│   └── ui/                           # shadcn/ui components
+│       └── rich-text-renderer.tsx    # Contentful RichText renderer
 └── lib/
     ├── contentful.ts                 # Contentful CMS client + helpers
     ├── utils.ts                      # cn() utility (Tailwind merge)
@@ -81,7 +82,13 @@ src/
 
 ### Core Features
 - **Mobile-first responsive** — Optimal di semua ukuran layar dengan breakpoint `sm/md/lg/xl`
-- **Contentful CMS** — Semua konten dinamis dari Contentful (profil, layanan, portofolio, produk, artikel)
+- **Contentful CMS** — Konten dinamis dari Contentful dengan default fallback
+  - ✅ Company Info (profil, kontak, aboutImage, sosmed)
+  - ✅ Services (layanan dengan icon, features, gambar)
+  - ✅ Portfolio (proyek dengan galeri, lokasi, tahun)
+  - ✅ Products (produk dengan galeri, fitur, harga)
+  - ✅ Articles (artikel dengan RichText, kategori, tanggal)
+  - ✅ Clients & Partners (logo auto-scroll)
 - **Contact form + Email** — Form kontak dengan Resend, kirim ke `info@hovtechautomation.com`
 - **Auto-reply email** — Konfirmasi otomatis ke pengirim
 - **Anti-spam** — Math CAPTCHA + honeypot + timer check
@@ -94,12 +101,22 @@ src/
 - **44px touch targets** — Semua elemen interaktif memenuhi standar aksesibilitas
 - **Social media links** — Instagram & Facebook di section kontak dan halaman /contact
 - **Search & filter** — Pencarian + filter kategori di portofolio, produk, artikel
+- **1:1 image ratio** — Gambar utama & galeri semua square (modern look)
+- **Horizontal scroll gallery** — Galeri produk & portfolio dengan snap scroll
+- **Description in hero** — Deskripsi/excerpt tampil di hero section, bukan di body
 
 ### SEO
 - **Dynamic metadata** — Setiap halaman punya title, description, Open Graph, Twitter Cards
+- **generateMetadata()** — Semua dynamic route punya metadata unik per konten
 - **Sitemap** — `sitemap.xml` untuk Google Search Console
 - **Robots.txt** — `robots.txt` dinamis yang mengizinkan semua crawler
 - **Favicon** — Multi-format (.ico, .png, apple-touch-icon) untuk browser & PWA
+
+### Bug Fixes Applied
+- **Hydration mismatch fixed** — Captcha `Math.random()` dipindah ke `useEffect`, tidak lagi di `useState`
+- **DialogContent accessibility** — `DialogTitle` dipindah ke dalam `DialogContent` di command.tsx
+- **Contentful field mismatches** — Image Array vs Link, RichText rendering, field name corrections
+- **Services page image** — Fixed `getAssetUrl` → `getFirstImageUrl` untuk Array-type image field
 
 ---
 
@@ -158,6 +175,34 @@ Domain `hovtechautomation.com` sudah diverifikasi di Resend. DNS records yang di
 
 ---
 
+## Contentful CMS
+
+### Content Models
+Website ini menggunakan 7 content model di Contentful:
+
+| Model | ID | Field Utama | Keterangan |
+|---|---|---|---|
+| **Company Info** | `companyInfo` | name, tagline, description, logo, whatsapp, email, address, instagram, facebook, phone, aboutImage, projectCount, clientCount, teamSize, visi, misi | Data perusahaan (single entry) |
+| **Service** | `service` | title, description, image (Array), icon, features (Array), order | Daftar layanan |
+| **Portfolio** | `portfolio` | title, excerpt, content (RichText), image (Array), gallery (Array), category, location, year | Proyek portofolio |
+| **Product** | `product` | name, description, content (RichText), image (Array), gallery (Array), category, features (Array), price | Produk |
+| **Article** | `article` | title, excerpt, content (RichText), image (Array), category, publishedAt | Blog/artikel |
+| **Client Partner** | `clientPartner` | name, logo, website | Logo klien & partner |
+| **Why Choose Us** | `whyChooseUs` | title, description, icon | Keunggulan |
+
+### Fallback System
+Semua halaman memiliki data default/fallback:
+- **Contentful tersedia + ada data** → Tampilkan data Contentful
+- **Contentful kosong / error** → Tampilkan data default (hardcoded)
+- **Environment variable belum dikonfigurasi** → Website tetap berfungsi dengan data default
+
+### Image Field Types
+Contentful menggunakan 2 tipe image field:
+- **Link (single Asset)** → Diambil dengan `getAssetUrl()`
+- **Array (multiple Assets)** → Diambil dengan `getFirstImageUrl()` atau `getGalleryUrls()`
+
+---
+
 ## Development
 
 ```bash
@@ -176,78 +221,81 @@ bun run db:push
 
 ---
 
-## Contentful CMS
+## Changelog
 
-### Content Models
-Website ini menggunakan 7 content model di Contentful:
+### v0.3.0 — Update Terbaru
+- ✅ **ServicesSection Contentful integration** — Homepage & /services fetch dari Contentful, fallback 4/6 default services
+- ✅ **aboutImage integration** — Field aboutImage dari Contentful ditampilkan di ProfileSection (1:1 square)
+- ✅ **Hydration mismatch fix** — Captcha Math.random() dipindah ke useEffect (ContactSection + ContactForm)
+- ✅ **DialogContent accessibility fix** — DialogTitle dipindah ke dalam DialogContent (command.tsx)
+- ✅ **Image ratio 1:1** — Semua gambar utama detail page diganti ke aspect-square
+- ✅ **Gallery horizontal scroll** — Galeri produk & portfolio: 1:1 square + snap scroll + hover zoom
+- ✅ **Description in hero** — Deskripsi produk dipindah ke hero section (di bawah judul)
+- ✅ **Services page image fix** — `getAssetUrl` → `getFirstImageUrl` untuk Array-type image field
 
-| Model | ID | Keterangan |
-|---|---|---|
-| **Company Info** | `companyInfo` | Data perusahaan (nama, alamat, kontak, sosmed) |
-| **Hero** | `hero` | Banner hero di homepage |
-| **Service** | `service` | Daftar layanan |
-| **Portfolio** | `portfolio` | Proyek portofolio |
-| **Product** | `product` | Produk yang dijual |
-| **Article** | `article` | Blog/artikel |
-| **Client Partner** | `clientPartner` | Logo klien & partner |
+### v0.2.0
+- ✅ Contentful RichText rendering (portfolio, produk, artikel)
+- ✅ generateMetadata() di semua dynamic routes
+- ✅ Image field handling (Array vs Link)
+- ✅ Full code analysis + README
 
-### Fallback System
-Semua halaman memiliki data default/fallback. Jika Contentful tidak tersedia atau environment variable belum dikonfigurasi, website tetap berfungsi dengan data default.
+### v0.1.0
+- ✅ Initial website setup
+- ✅ Contentful CMS integration
+- ✅ Contact form + Resend email
+- ✅ Auto-scroll clients & partners
+- ✅ Social media links
+- ✅ Mobile responsive optimization
 
 ---
 
-## Analisis & Roadmap Optimasi
+## Roadmap Optimasi
 
-### Status Saat Ini (v0.2.0)
+### Sudah Diselesaikan ✅
+| # | Issue | Status |
+|---|---|---|
+| 1 | generateMetadata() di dynamic routes | ✅ v0.2.0 |
+| 2 | Contentful RichText rendering | ✅ v0.2.0 |
+| 3 | Image field Array vs Link handling | ✅ v0.2.0 |
+| 4 | Hydration mismatch (captcha Math.random) | ✅ v0.3.0 |
+| 5 | DialogContent accessibility warning | ✅ v0.3.0 |
+| 6 | ServicesSection Contentful integration | ✅ v0.3.0 |
+| 7 | aboutImage integration | ✅ v0.3.0 |
+| 8 | Image ratio 1:1 + gallery horizontal scroll | ✅ v0.3.0 |
+| 9 | Description di hero section | ✅ v0.3.0 |
 
-#### Sudah Berfungsi
-- [x] Homepage dengan 8 section lengkap
-- [x] Halaman profil, layanan, portofolio, produk, artikel
-- [x] Dynamic route untuk detail halaman
-- [x] Form kontak dengan Resend (email ke admin + auto-reply)
-- [x] Contentful CMS integration (semua 7 content model)
-- [x] Responsive mobile-first design
-- [x] SEO meta tags + sitemap + robots.txt
-- [x] Social media links (Instagram & Facebook)
-- [x] WhatsApp floating button
-- [x] Auto-scroll clients & partners section
+### Belum Dikerjakan
 
-#### Perlu Diperbaiki (Prioritas Tinggi)
-
+#### Prioritas Tinggi 🔴
 | # | Issue | File | Keterangan |
 |---|---|---|---|
-| 1 | Google Maps API Key hardcoded | `contact/page.tsx` | API key terekspos di source code. Pindahkan ke env var `NEXT_PUBLIC_GOOGLE_MAPS_KEY` |
-| 2 | XSS di email template | `api/contact/route.ts` | Input user tidak di-escape sebelum dimasukkan ke HTML email. Gunakan `sanitize-html` |
-| 3 | Tidak ada rate limiting | `api/contact/route.ts` | API kontak rentan spam. Tambahkan rate limiter berbasis IP |
-| 4 | Tidak ada `generateMetadata()` di dynamic routes | `portfolio/[slug]`, `products/[slug]`, `artikel/[slug]` | Semua halaman detail punya title sama — buruk untuk SEO |
-| 5 | Tidak ada `loading.tsx` | `src/app/` | Tidak ada skeleton loading saat navigasi |
+| 1 | Google Maps API Key hardcoded | `contact/page.tsx` | Pindahkan ke env var `NEXT_PUBLIC_GOOGLE_MAPS_KEY` |
+| 2 | XSS di email template | `api/contact/route.ts` | Input user tidak di-escape. Gunakan `sanitize-html` |
+| 3 | Tidak ada rate limiting | `api/contact/route.ts` | API kontak rentan spam. Tambahkan rate limiter IP |
 
-#### Perlu Diperbaiki (Prioritas Sedang)
-
+#### Prioritas Sedang 🟡
 | # | Issue | Keterangan |
 |---|---|---|
-| 6 | `getCompanyInfo()` duplikat di 8+ file | Ekstrak ke `src/lib/company.ts` sebagai shared function |
-| 7 | `ContactForm.tsx` & `ContactSection.tsx` duplikat | ~440 baris kode form duplikat. Gabungkan menjadi satu komponen |
-| 8 | 3 list client komponen hampir identik | `PortfolioListClient`, `ProductListClient`, `ArticleListClient` bisa dijadikan generic `<FilterableGrid>` |
-| 9 | `force-dynamic` + `revalidate = 0` di semua halaman | Nonaktifkan caching Next.js. Gunakan `revalidate = 3600` (ISR 1 jam) |
-| 10 | Sitemap hanya halaman statis | Artikel, portofolio, produk belum masuk sitemap |
-| 11 | Default data tidak konsisten | `projectCount=50` vs `200`, email `info@hovtech.id` vs `info@hovtechautomation.com` |
-| 12 | `ignoreBuildErrors: true` | TypeScript error di-suppress, bisa masalah ke production |
-| 13 | Tidak ada `not-found.tsx` | Halaman 404 default Next.js (kurang branding) |
-| 14 | Tidak ada `error.tsx` | Error boundary tidak ada, error tampil raw Next.js page |
+| 4 | `getCompanyInfo()` duplikat di 8+ file | Ekstrak ke `src/lib/company.ts` |
+| 5 | `ContactForm.tsx` & `ContactSection.tsx` duplikat | ~440 baris form duplikat. Gabungkan |
+| 6 | 3 list client komponen hampir identik | Bisa dijadikan generic `<FilterableGrid>` |
+| 7 | `force-dynamic` + `revalidate = 0` semua halaman | Gunakan ISR `revalidate = 3600` |
+| 8 | Sitemap hanya halaman statis | Artikel, portofolio, produk belum masuk sitemap |
+| 9 | Tidak ada `loading.tsx` | Tidak ada skeleton loading saat navigasi |
+| 10 | Tidak ada `not-found.tsx` | Halaman 404 default Next.js (kurang branding) |
+| 11 | Tidak ada `error.tsx` | Error boundary tidak ada |
 
-#### Perlu Diperbaiki (Prioritas Rendah)
-
+#### Prioritas Rendah 🟢
 | # | Issue | Keterangan |
 |---|---|---|
-| 15 | ~30 dependency unused | `next-auth`, `next-intl`, `@dnd-kit/*`, `zustand`, `@tanstack/*`, `recharts`, dll |
-| 16 | ~29 shadcn/ui components unused | Hanya 7 yang dipakai: `button`, `sheet`, `input`, `textarea`, `label`, `toast`, `toaster` |
-| 17 | Prisma setup unused | `db.ts`, `prisma/schema.prisma`, `db/custom.db` tidak digunakan |
-| 18 | ESLint rules hampir semua off | Linter tidak menangkap error meaningful |
-| 19 | Dark mode CSS ada tapi tidak bisa diakses | Variabel dark theme ada di `globals.css` tapi tidak ada toggle |
-| 20 | Artikel tidak render rich text | Konten artikel plain text, `react-markdown` ada tapi belum dipakai |
-| 21 | Duplicate `robots.txt` | `public/robots.txt` dan `src/app/robots.ts` bentrok |
-| 22 | Test API endpoint leftover | `GET /api` return "Hello, world!" — unused |
+| 12 | ~30 dependency unused | `next-auth`, `next-intl`, `@dnd-kit/*`, `zustand`, dll |
+| 13 | ~29 shadcn/ui components unused | Hanya 7 yang dipakai: button, sheet, input, textarea, label, toast, toaster |
+| 14 | Prisma setup unused | `db.ts`, `prisma/schema.prisma`, `db/custom.db` tidak digunakan |
+| 15 | ESLint rules hampir semua off | Linter tidak menangkap error meaningful |
+| 16 | Dark mode CSS ada tapi tidak bisa diakses | Variabel dark theme ada tapi tidak ada toggle |
+| 17 | Duplicate `robots.txt` | `public/robots.txt` dan `src/app/robots.ts` bentrok |
+| 18 | Test API endpoint leftover | `GET /api` return "Hello, world!" — unused |
+| 19 | `ignoreBuildErrors: true` | TypeScript error di-suppress |
 
 ---
 
