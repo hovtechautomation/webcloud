@@ -141,7 +141,7 @@ export default async function ContactPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-5 sm:mb-6 text-center">Lokasi Kami</h2>
             <div className="aspect-video rounded-xl sm:rounded-2xl overflow-hidden bg-slate-100">
-              <iframe src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(companyInfo.address)}`} width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" className="rounded-xl sm:rounded-2xl" />
+              <iframe src={process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ? `https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&q=${encodeURIComponent(companyInfo.address)}` : `https://maps.google.com/maps?q=${encodeURIComponent(companyInfo.address)}&output=embed`} width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" className="rounded-xl sm:rounded-2xl" />
             </div>
           </div>
         </section>
