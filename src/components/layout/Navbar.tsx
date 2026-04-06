@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { MessageCircle, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
@@ -21,6 +22,7 @@ export default function Navbar({
   tagline = 'Automation',
   whatsapp = '6285733118439',
 }: NavbarProps) {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -84,15 +86,21 @@ export default function Navbar({
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6 lg:gap-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-sm font-medium text-slate-600 hover:text-orange-600 transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                    'text-sm font-medium transition-colors',
+                    isActive ? 'text-orange-600 font-semibold' : 'text-slate-600 hover:text-orange-600'
+                  )}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
             <a
               href={`https://wa.me/${whatsapp}`}
               target="_blank"
@@ -149,16 +157,22 @@ export default function Navbar({
               {/* Mobile Nav Links - Better tap targets */}
               <div className="p-4">
                 <div className="flex flex-col gap-1">
-                  {navLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className="text-base font-medium text-slate-700 hover:text-orange-600 hover:bg-orange-50 transition-colors rounded-xl px-4 py-3 min-h-[48px] flex items-center"
-                      onClick={() => setOpen(false)}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
+                  {navLinks.map((link) => {
+                    const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className={cn(
+                          'text-base font-medium transition-colors rounded-xl px-4 py-3 min-h-[48px] flex items-center',
+                          isActive ? 'text-orange-600 bg-orange-50 font-semibold' : 'text-slate-700 hover:text-orange-600 hover:bg-orange-50'
+                        )}
+                        onClick={() => setOpen(false)}
+                      >
+                        {link.label}
+                      </Link>
+                    );
+                  })}
                 </div>
 
                 {/* Mobile WhatsApp CTA */}

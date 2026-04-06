@@ -1,6 +1,5 @@
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import FloatingWhatsApp from '@/components/layout/FloatingWhatsApp';
 import HeroSection from '@/components/sections/HeroSection';
 import ProfileSection from '@/components/sections/ProfileSection';
 import ServicesSection, { type Service } from '@/components/sections/ServicesSection';
@@ -123,7 +122,6 @@ export default async function Home() {
         whatsapp={companyInfo.whatsapp}
       />
 
-      <FloatingWhatsApp whatsapp={companyInfo.whatsapp} />
     </div>
   );
 }

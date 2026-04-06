@@ -2,10 +2,9 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import FloatingWhatsApp from '@/components/layout/FloatingWhatsApp';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, MessageCircle, Package, FileText } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Package, FileText, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getEntryBySlug, CONTENT_TYPES, getAssetUrl, getGalleryUrls, getFirstImageUrl } from '@/lib/contentful';
 import { getCompanyInfo } from '@/lib/company';
@@ -39,6 +38,16 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const companyInfo = await getCompanyInfo();
   const name = (fields.name as string) || '';
   const category = (fields.category as string) || '';
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Beranda', item: 'https://www.hovtechautomation.com' },
+      { '@type': 'ListItem', position: 2, name: 'Produk', item: 'https://www.hovtechautomation.com/products' },
+      { '@type': 'ListItem', position: 3, name, item: `https://www.hovtechautomation.com/products/${slug}` },
+    ],
+  };
   const description = (fields.description as string) || '';
   const content = fields.content || null; // RichText
   const price = (fields.price as string) || '';
@@ -48,12 +57,16 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-900">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <Navbar logo={getAssetUrl(companyInfo.logo)} companyName={companyInfo.name} tagline={companyInfo.tagline} whatsapp={companyInfo.whatsapp} />
       <main className="flex-1">
         {/* Hero Section */}
         <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-12 sm:py-16 md:py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <Link href="/products" className="inline-flex items-center gap-2 text-slate-400 hover:text-orange-500 transition-colors mb-4 sm:mb-6 text-sm"><ArrowLeft className="w-4 h-4" /> Kembali ke Produk</Link>
+            <Link href="/products" className="inline-flex items-center gap-2 text-slate-400 hover:text-orange-500 transition-colors mb-3 sm:mb-4 text-sm"><ArrowLeft className="w-4 h-4" /> Kembali ke Produk</Link>
+            <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-4 sm:mb-6">
+              <Link href="/" className="hover:text-orange-500 transition-colors">Beranda</Link><ChevronRight className="w-3 h-3" /><Link href="/products" className="hover:text-orange-500 transition-colors">Produk</Link><ChevronRight className="w-3 h-3" /><span className="text-slate-300 truncate max-w-[200px] sm:max-w-[400px]">{name}</span>
+            </nav>
             {category && <span className="inline-block px-3 py-1 bg-orange-500/20 text-orange-500 text-xs font-bold rounded-full mb-3 sm:mb-4">{category}</span>}
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-4">{name}</h1>
             {price && <p className="text-xl sm:text-2xl font-bold text-orange-500 mb-3 sm:mb-4">{price}</p>}
@@ -123,7 +136,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         </section>
       </main>
       <Footer logo={getAssetUrl(companyInfo.logo)} companyName={companyInfo.name} tagline={companyInfo.tagline} instagram={companyInfo.instagram} facebook={companyInfo.facebook} whatsapp={companyInfo.whatsapp} />
-      <FloatingWhatsApp whatsapp={companyInfo.whatsapp} />
     </div>
   );
 }

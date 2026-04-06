@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import FloatingWhatsApp from '@/components/layout/FloatingWhatsApp';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import ProductListClient from '@/components/clients/ProductListClient';
@@ -45,7 +44,6 @@ export default async function ProductsPage() {
         <ProductListClient products={products} categories={categories} whatsapp={companyInfo.whatsapp} />
       </main>
       <Footer logo={getAssetUrl(companyInfo.logo)} companyName={companyInfo.name} tagline={companyInfo.tagline} instagram={companyInfo.instagram} facebook={companyInfo.facebook} whatsapp={companyInfo.whatsapp} />
-      <FloatingWhatsApp whatsapp={companyInfo.whatsapp} />
     </div>
   );
 }

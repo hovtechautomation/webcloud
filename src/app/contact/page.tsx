@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import FloatingWhatsApp from '@/components/layout/FloatingWhatsApp';
 import Link from 'next/link';
 import { ArrowLeft, MessageCircle, Mail, Instagram, Facebook } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -120,7 +119,6 @@ export default async function ContactPage() {
       </main>
 
       <Footer logo={getAssetUrl(companyInfo.logo)} companyName={companyInfo.name} tagline={companyInfo.tagline} instagram={companyInfo.instagram} facebook={companyInfo.facebook} whatsapp={companyInfo.whatsapp} />
-      <FloatingWhatsApp whatsapp={companyInfo.whatsapp} />
     </div>
   );
 }

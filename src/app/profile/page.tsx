@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import FloatingWhatsApp from '@/components/layout/FloatingWhatsApp';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, Target, Eye, Users, Award, Briefcase, GraduationCap, MessageCircle } from 'lucide-react';
@@ -174,7 +173,6 @@ export default async function ProfilePage() {
       </main>
 
       <Footer logo={getAssetUrl(companyInfo.logo)} companyName={companyInfo.name} tagline={companyInfo.tagline} instagram={companyInfo.instagram} facebook={companyInfo.facebook} whatsapp={companyInfo.whatsapp} />
-      <FloatingWhatsApp whatsapp={companyInfo.whatsapp} />
     </div>
   );
 }

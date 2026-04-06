@@ -46,6 +46,14 @@ export const metadata: Metadata = {
     siteName: "Hovtech Automation",
     locale: "id_ID",
     type: "website",
+    images: [
+      {
+        url: "https://www.hovtechautomation.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "HOVTECH Automation & IoT",
+      },
+    ],
   },
   robots: {
     index: true,
@@ -63,6 +71,7 @@ export const metadata: Metadata = {
     title: "HOVTECH - Automation & IoT",
     description:
       "Solusi Otomasi Industri, IoT, dan Project Custom Terbaik di Surabaya.",
+    images: ["https://www.hovtechautomation.com/og-image.png"],
   },
 };
 
@@ -71,9 +80,57 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Organization',
+        name: 'PT Hovtech Automation Indonesia',
+        alternateName: 'HOVTECH',
+        url: 'https://www.hovtechautomation.com',
+        logo: 'https://www.hovtechautomation.com/favicon.jpg',
+        description: 'Jasa segala bidang automation control: PLC, Microcontroller, SCADA, HMI, PCB, Aplikasi, WEB, coding, dan project custom di Surabaya.',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'Jemur Wonosari Kec Wonocolo',
+          addressLocality: 'Surabaya',
+          addressRegion: 'Jawa Timur',
+          postalCode: '60237',
+          addressCountry: 'ID',
+        },
+        contactPoint: {
+          '@type': 'ContactPoint',
+          telephone: '+62-857-3311-8439',
+          contactType: 'customer service',
+          availableLanguage: ['Indonesian', 'English'],
+        },
+        sameAs: [
+          'https://instagram.com/hovtech.id',
+          'https://www.facebook.com/mohrifqi17',
+        ],
+      },
+      {
+        '@type': 'WebSite',
+        name: 'HOVTECH Automation',
+        url: 'https://www.hovtechautomation.com',
+        description: 'Solusi Otomasi Industri, IoT, dan Project Custom Terbaik di Surabaya.',
+        inLanguage: 'id-ID',
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: 'https://www.hovtechautomation.com/?q={search_term_string}',
+          'query-input': 'required name=search_term_string',
+        },
+      },
+    ],
+  };
+
   return (
     <html lang="id" suppressHydrationWarning>
       <body className={`${inter.variable} antialiased font-sans`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         {children}
         <Toaster />
       </body>
