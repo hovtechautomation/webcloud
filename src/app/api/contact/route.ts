@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
+export const runtime = 'edge';
+
 // ==================== XSS Protection ====================
 function escapeHtml(str: string): string {
   return str

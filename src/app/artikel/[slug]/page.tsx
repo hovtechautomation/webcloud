@@ -10,6 +10,7 @@ import { getEntryBySlug, CONTENT_TYPES, getAssetUrl, getFirstImageUrl } from '@/
 import { getCompanyInfo } from '@/lib/company';
 import RichTextWrapper from '@/components/ui/rich-text-wrapper';
 
+export const runtime = 'edge';
 // ISR — revalidate every 5 minutes
 export const revalidate = 300;
 
