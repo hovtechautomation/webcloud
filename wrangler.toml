@@ -1,6 +1,7 @@
 name = "webcloud"
 compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".vercel/output/static"
 
 # ============================================================
 # Environment Variables
@@ -8,17 +9,14 @@ compatibility_flags = ["nodejs_compat"]
 #   Dashboard → Pages → webcloud → Settings → Environment Variables
 #
 # REQUIRED (Build + Production):
-#   NEXT_PUBLIC_CONTENTFUL_SPACE_ID = "4fk8hsc95cwp"
-#   NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN = "w-9pLPzTr8V1pK4FZ4NpkcEqa66gKFdVo2p8G-XqgXc"
+#   NEXT_PUBLIC_CONTENTFUL_SPACE_ID
+#   NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN
 #
 # REQUIRED (Production only — set as Secret):
-#   RESEND_API_KEY = "re_DTnE84oj_7zetrvq9yJQeD2dVPVkMbdGi"
+#   RESEND_API_KEY
 #
 # OPTIONAL (have defaults):
 #   FROM_EMAIL = "info@hovtechautomation.com"
 #   TO_EMAIL = "info@hovtechautomation.com"
 #   NEXT_PUBLIC_WHATSAPP = "6285733118439"
 # ============================================================
-
-main = ".open-next/worker.js"
-assets = { directory = ".open-next/assets", binding = "ASSETS" }
