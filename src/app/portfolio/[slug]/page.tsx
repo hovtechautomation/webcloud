@@ -10,8 +10,7 @@ import { ArrowLeft, MapPin, Calendar, MessageCircle, FileText, ChevronRight } fr
 import { Button } from '@/components/ui/button';
 import { getEntryBySlug, CONTENT_TYPES, getAssetUrl, getGalleryUrls, getFirstImageUrl } from '@/lib/contentful';
 import { getCompanyInfo } from '@/lib/company';
-import dynamic from 'next/dynamic';
-const RichTextRenderer = dynamic(() => import('@/components/ui/rich-text-renderer'), { ssr: false });
+import RichTextWrapper from '@/components/ui/rich-text-wrapper';
 
 // Cloudflare Edge: ISR — revalidate every 5 minutes
 export const revalidate = 300;
@@ -94,7 +93,7 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
             {/* RichText Content */}
             {content && (
               <div className="mb-8 sm:mb-10">
-                <RichTextRenderer document={content} />
+                <RichTextWrapper document={content} />
               </div>
             )}
 
