@@ -1,5 +1,6 @@
 // Contentful REST API client — Edge-compatible (no Node.js SDK required)
 // Uses Contentful Delivery API directly via fetch()
+// Includes link resolution to match the official SDK's behavior
 
 const spaceId = process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID;
 const accessToken = process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN;
@@ -101,6 +102,124 @@ async function contentfulFetch(endpoint: string, params: Record<string, any> = {
   return response.json();
 }
 
+// ==================== Link Resolution ====================
+// Replicates the Contentful SDK's automatic link resolution.
+// The REST API returns Link objects like { sys: { type: 'Link', linkType: 'Asset', id: 'xxx' } }
+// while the SDK resolves them to full objects with .fields. This function bridges that gap.
+
+function resolveLinks(items: any[], includes: ContentfulResponse['includes']): any[] {
+  if (!includes) return items;
+
+  // Build lookup maps by ID
+  const assetMap = new Map<string, any>();
+  const entryMap = new Map<string, any>();
+
+  if (includes.Asset) {
+    for (const asset of includes.Asset) {
+      assetMap.set(asset.sys.id, asset);
+    }
+  }
+  if (includes.Entry) {
+    for (const entry of includes.Entry) {
+      entryMap.set(entry.sys.id, entry);
+    }
+  }
+
+  // Recursive resolver — walks through an object and replaces Links with resolved items
+  function resolve(obj: any, depth: number = 0): any {
+    if (depth > 20 || obj === null || obj === undefined) return obj;
+
+    // Array: resolve each element
+    if (Array.isArray(obj)) {
+      return obj.map((item) => resolve(item, depth + 1));
+    }
+
+    // Plain object
+    if (typeof obj === 'object') {
+      // Check if this is a Link object
+      if (obj.sys && obj.sys.type === 'Link' && obj.sys.id) {
+        const linkType = obj.sys.linkType; // 'Asset' or 'Entry'
+        if (linkType === 'Asset') {
+          return assetMap.get(obj.sys.id) || obj;
+        }
+        if (linkType === 'Entry') {
+          return entryMap.get(obj.sys.id) || obj;
+        }
+      }
+
+      // Not a Link — recursively resolve each value
+      const resolved: any = {};
+      for (const [key, value] of Object.entries(obj)) {
+        resolved[key] = resolve(value, depth + 1);
+      }
+      return resolved;
+    }
+
+    return obj;
+  }
+
+  return items.map((item) => resolve(item));
+}
+
+// Also resolve links inside Rich Text documents (for embedded assets/entries)
+function resolveRichTextLinks(doc: any, includes: ContentfulResponse['includes']): any {
+  if (!doc || !includes) return doc;
+
+  if (!includes.Asset) return doc;
+
+  const assetMap = new Map<string, any>();
+  for (const asset of includes.Asset) {
+    assetMap.set(asset.sys.id, asset);
+  }
+
+  const entryMap = new Map<string, any>();
+  if (includes.Entry) {
+    for (const entry of includes.Entry) {
+      entryMap.set(entry.sys.id, entry);
+    }
+  }
+
+  // Resolve node.data.target references in rich text
+  function resolveNode(node: any): any {
+    if (!node) return node;
+
+    if (Array.isArray(node)) {
+      return node.map(resolveNode);
+    }
+
+    if (typeof node === 'object') {
+      const resolved = { ...node };
+
+      // Resolve target references (embedded assets, embedded entries)
+      if (resolved.data && resolved.data.target && resolved.data.target.sys) {
+        const target = resolved.data.target;
+        if (target.sys.type === 'Link' && target.sys.id) {
+          if (target.sys.linkType === 'Asset') {
+            resolved.data.target = assetMap.get(target.sys.id) || target;
+          } else if (target.sys.linkType === 'Entry') {
+            resolved.data.target = entryMap.get(target.sys.id) || target;
+          }
+        }
+      }
+
+      // Resolve content arrays recursively
+      if (resolved.content && Array.isArray(resolved.content)) {
+        resolved.content = resolved.content.map(resolveNode);
+      }
+
+      return resolved;
+    }
+
+    return node;
+  }
+
+  if (doc.content && Array.isArray(doc.content)) {
+    return { ...doc, content: doc.content.map(resolveNode) };
+  }
+
+  return doc;
+}
+
 // ==================== Contentful Fetch Functions ====================
 
 export async function getEntries(contentType: string, options?: Record<string, unknown>): Promise<ContentfulEntry[]> {
@@ -113,8 +232,9 @@ export async function getEntries(contentType: string, options?: Record<string, u
       content_type: contentType,
       ...options,
     });
-    setCache(cacheKey, response.items);
-    return response.items;
+    const resolved = resolveLinks(response.items, response.includes);
+    setCache(cacheKey, resolved);
+    return resolved;
   } catch (error) {
     console.error(`Error fetching ${contentType}:`, error);
     return [];
@@ -132,7 +252,8 @@ export async function getFirstEntry(contentType: string, options?: Record<string
       limit: 1,
       ...options,
     });
-    const result = response.items[0] || null;
+    const resolved = resolveLinks(response.items, response.includes);
+    const result = resolved[0] || null;
     setCache(cacheKey, result);
     return result;
   } catch (error) {
@@ -158,7 +279,8 @@ export async function getEntryBySlug(contentType: string, slug: string): Promise
       'fields.slug': slug,
       limit: 1,
     });
-    const result = response.items[0] || null;
+    const resolved = resolveLinks(response.items, response.includes);
+    const result = resolved[0] || null;
     setCache(cacheKey, result);
     return result;
   } catch (error) {
