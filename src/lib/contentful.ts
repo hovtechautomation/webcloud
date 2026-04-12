@@ -1,28 +1,14 @@
-import { createClient, type Entry, type Asset } from 'contentful';
+// Contentful REST API client — Edge-compatible (no Node.js SDK required)
+// Uses Contentful Delivery API directly via fetch()
 
 const spaceId = process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID;
 const accessToken = process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN;
 
-export const contentfulClient = spaceId && accessToken
-  ? createClient({ space: spaceId, accessToken })
+const BASE_URL = spaceId
+  ? `https://cdn.contentful.com/spaces/${spaceId}`
   : null;
 
-export const CONTENT_TYPES = {
-  COMPANY_INFO: 'companyInfo',
-  SERVICE: 'service',
-  PRODUCT: 'product',
-  PORTFOLIO: 'portfolio',
-  TEAM_MEMBER: 'teamMember',
-  MILESTONE: 'milestone',
-  WHY_CHOOSE_US: 'whyChooseUs',
-  CLIENT: 'client',
-  ARTICLE: 'article',
-} as const;
-
 // ==================== In-Memory Cache (Edge-Safe) ====================
-// Works per-isolate on Cloudflare Workers. Provides caching within
-// a single isolate's lifetime. For cross-request persistence, use
-// Cloudflare KV or Cache API.
 const cache = new Map<string, { data: any; timestamp: number }>();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
@@ -43,17 +29,87 @@ function getCacheKey(contentType: string, options?: Record<string, unknown>): st
   return `${contentType}:${JSON.stringify(options || {})}`;
 }
 
+// ==================== Types ====================
+
+export interface ContentfulSys {
+  id: string;
+  type: string;
+  createdAt: string;
+  updatedAt: string;
+  locale: string;
+  contentType?: { sys: { id: string } };
+}
+
+export interface ContentfulEntry<T = any> {
+  sys: ContentfulSys;
+  fields: T;
+}
+
+// ==================== CONTENT_TYPES ====================
+
+export const CONTENT_TYPES = {
+  COMPANY_INFO: 'companyInfo',
+  SERVICE: 'service',
+  PRODUCT: 'product',
+  PORTFOLIO: 'portfolio',
+  TEAM_MEMBER: 'teamMember',
+  MILESTONE: 'milestone',
+  WHY_CHOOSE_US: 'whyChooseUs',
+  CLIENT: 'client',
+  ARTICLE: 'article',
+} as const;
+
+// ==================== API Helper ====================
+
+interface ContentfulResponse {
+  sys: { type: string };
+  total: number;
+  skip: number;
+  limit: number;
+  items: any[];
+  includes?: {
+    Entry?: any[];
+    Asset?: any[];
+  };
+}
+
+async function contentfulFetch(endpoint: string, params: Record<string, any> = {}): Promise<ContentfulResponse> {
+  if (!BASE_URL || !accessToken) {
+    throw new Error('Contentful environment variables are not configured');
+  }
+
+  const url = new URL(`${BASE_URL}${endpoint}`);
+  url.searchParams.set('access_token', accessToken);
+  // Always include linked resources (up to 10 levels) to match SDK behavior
+  params.include = params.include ?? 10;
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== null) {
+      url.searchParams.set(key, String(value));
+    }
+  }
+
+  const response = await fetch(url.toString(), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    console.error(`Contentful API error [${response.status}]: ${text}`);
+    throw new Error(`Contentful API error: ${response.status}`);
+  }
+
+  return response.json();
+}
+
 // ==================== Contentful Fetch Functions ====================
 
-export async function getEntries(contentType: string, options?: Record<string, unknown>): Promise<Entry<any>[]> {
-  if (!contentfulClient) return [];
-
+export async function getEntries(contentType: string, options?: Record<string, unknown>): Promise<ContentfulEntry[]> {
   const cacheKey = getCacheKey(contentType, options);
-  const cached = getCached<Entry<any>[]>(cacheKey);
+  const cached = getCached<ContentfulEntry[]>(cacheKey);
   if (cached) return cached;
 
   try {
-    const response = await contentfulClient.getEntries({
+    const response = await contentfulFetch('/entries', {
       content_type: contentType,
       ...options,
     });
@@ -65,15 +121,13 @@ export async function getEntries(contentType: string, options?: Record<string, u
   }
 }
 
-export async function getFirstEntry(contentType: string, options?: Record<string, unknown>): Promise<Entry<any> | null> {
-  if (!contentfulClient) return null;
-
+export async function getFirstEntry(contentType: string, options?: Record<string, unknown>): Promise<ContentfulEntry | null> {
   const cacheKey = getCacheKey(contentType, { ...options, limit: 1, _first: true });
-  const cached = getCached<Entry<any> | null>(cacheKey);
+  const cached = getCached<ContentfulEntry | null>(cacheKey);
   if (cached !== null) return cached;
 
   try {
-    const response = await contentfulClient.getEntries({
+    const response = await contentfulFetch('/entries', {
       content_type: contentType,
       limit: 1,
       ...options,
@@ -93,15 +147,13 @@ export function getAssetUrl(asset: any): string | undefined {
   return url.startsWith('//') ? `https:${url}` : url;
 }
 
-export async function getEntryBySlug(contentType: string, slug: string): Promise<Entry<any> | null> {
-  if (!contentfulClient) return null;
-
+export async function getEntryBySlug(contentType: string, slug: string): Promise<ContentfulEntry | null> {
   const cacheKey = getCacheKey(contentType, { slug });
-  const cached = getCached<Entry<any> | null>(cacheKey);
+  const cached = getCached<ContentfulEntry | null>(cacheKey);
   if (cached !== null) return cached;
 
   try {
-    const response = await contentfulClient.getEntries({
+    const response = await contentfulFetch('/entries', {
       content_type: contentType,
       'fields.slug': slug,
       limit: 1,
@@ -116,19 +168,17 @@ export async function getEntryBySlug(contentType: string, slug: string): Promise
 }
 
 export async function getAllSlugs(contentType: string): Promise<string[]> {
-  if (!contentfulClient) return [];
-
   const cacheKey = `slugs:${contentType}`;
   const cached = getCached<string[]>(cacheKey);
   if (cached) return cached;
 
   try {
-    const response = await contentfulClient.getEntries({
+    const response = await contentfulFetch('/entries', {
       content_type: contentType,
-      select: ['fields.slug'] as any,
+      select: 'fields.slug',
     });
     const slugs = response.items
-      .map((item: any) => item.fields.slug)
+      .map((item: any) => item.fields?.slug)
       .filter((slug: string | undefined): slug is string => !!slug);
     setCache(cacheKey, slugs);
     return slugs;
