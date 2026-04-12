@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
@@ -11,21 +13,22 @@ function escapeHtml(str: string): string {
     .replace(/'/g, '&#039;');
 }
 
-// ==================== Rate Limiting (In-Memory) ====================
+// ==================== Rate Limiting (Edge-Safe) ====================
+// Cloudflare Workers are request-scoped, so in-memory Map is per-isolate.
+// This provides basic burst protection; for production-grade rate limiting,
+// consider Cloudflare KV, Durable Objects, or Workers Analytics.
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_MAX = 5; // max requests per window
 const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute in ms
 
-// Cleanup stale entries every 5 minutes
-setInterval(() => {
+function isRateLimited(ip: string): boolean {
   const now = Date.now();
+
+  // Cleanup stale entries on each check (no setInterval needed on Edge)
   for (const [key, val] of rateLimitMap.entries()) {
     if (val.resetTime <= now) rateLimitMap.delete(key);
   }
-}, 5 * 60 * 1000);
 
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
   const entry = rateLimitMap.get(ip);
 
   if (!entry || entry.resetTime <= now) {
@@ -38,22 +41,18 @@ function isRateLimited(ip: string): boolean {
 }
 
 // ==================== Resend Client ====================
-let resendInstance: Resend | null = null;
-
-function getResend(): Resend {
-  if (!resendInstance) {
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) {
-      throw new Error('RESEND_API_KEY is not configured');
-    }
-    resendInstance = new Resend(apiKey);
-  }
-  return resendInstance;
-}
-
+// Instantiate per-request to avoid stale closures in Edge isolation
 const FROM_EMAIL = process.env.FROM_EMAIL || 'info@hovtechautomation.com';
 const TO_EMAIL = process.env.TO_EMAIL || 'info@hovtechautomation.com';
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP || '6285733118439';
+
+function getResend(): Resend {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    throw new Error('RESEND_API_KEY is not configured');
+  }
+  return new Resend(apiKey);
+}
 
 // ==================== Input Validation ====================
 const MAX_FIELD_LENGTHS: Record<string, number> = {

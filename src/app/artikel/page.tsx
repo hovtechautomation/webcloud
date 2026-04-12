@@ -8,8 +8,8 @@ import { getCompanyInfo } from '@/lib/company';
 import { getEntries, CONTENT_TYPES, getAssetUrl, getFirstImageUrl } from '@/lib/contentful';
 
 export const metadata: Metadata = { title: 'Artikel', description: 'Baca artikel terbaru seputar otomasi industri, IoT, tips & trik, dan kegiatan HOVTECH.' };
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Cloudflare Edge: ISR — revalidate every 5 minutes
+export const revalidate = 300;
 
 const defaultArticles = [
   { _id: '1', title: 'HOVTECH Raih Sertifikasi ISO 9001:2015', slug: 'hovtech-raih-sertifikasi-iso-9001-2015', excerpt: 'PT Hovtech Automation Indonesia berhasil meraih sertifikasi ISO 9001:2015.', imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800&h=600', category: 'Berita', publishedAt: '2024-01-15', featured: true },

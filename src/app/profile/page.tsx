@@ -14,8 +14,8 @@ export const metadata: Metadata = {
   description: 'Mengenal lebih dekat PT Hovtech Automation Indonesia - solusi otomasi industri terpercaya.',
 };
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Cloudflare Edge: ISR — revalidate every 5 minutes
+export const revalidate = 300;
 
 const defaultMilestones = [
   { _id: '1', year: '2018', title: 'Pendirian Perusahaan', description: 'HOVTECH didirikan dengan fokus pada solusi otomasi industri.' },

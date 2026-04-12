@@ -10,8 +10,9 @@ import ArticlesSection from '@/components/sections/ArticlesSection';
 import { getCompanyInfo } from '@/lib/company';
 import { getEntries, CONTENT_TYPES, getAssetUrl, getFirstImageUrl } from '@/lib/contentful';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// ISR: Revalidate setiap 5 menit untuk performa optimal di Cloudflare Edge
+// Konten dari Contentful tidak berubah setiap detik, jadi cache sangat efektif
+export const revalidate = 300;
 
 const defaultServices: Service[] = [
   {
@@ -67,6 +68,8 @@ async function getServices(): Promise<Service[]> {
     return defaultServices;
   }
 }
+
+export const dynamic = 'force-static'; // Allow static generation with ISR
 
 export default async function Home() {
   const companyInfo = await getCompanyInfo();

@@ -13,8 +13,8 @@ export const metadata: Metadata = {
   description: 'Punya pertanyaan atau ingin berdiskusi tentang project? Tim kami siap membantu Anda.',
 };
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Cloudflare Edge: ISR — revalidate every 5 minutes
+export const revalidate = 300;
 
 export default async function ContactPage() {
   const companyInfo = await getCompanyInfo();

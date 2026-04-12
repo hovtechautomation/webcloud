@@ -8,8 +8,8 @@ import { getCompanyInfo } from '@/lib/company';
 import { getEntries, CONTENT_TYPES, getAssetUrl } from '@/lib/contentful';
 
 export const metadata: Metadata = { title: 'Produk', description: 'Temukan berbagai produk otomasi industri, PLC, IoT Gateway, dan sensor.' };
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Cloudflare Edge: ISR — revalidate every 5 minutes
+export const revalidate = 300;
 
 const defaultProducts = [
   { _id: '1', name: 'PLC Controller HVT-100', slug: 'plc-controller-hvt-100', description: 'PLC controller dengan 16 I/O digital.', price: 'Rp 2.500.000', category: 'PLC', imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800&h=600', features: ['16 I/O Digital', 'Modbus RTU/TCP', 'Garansi 2 Tahun'] },

@@ -32,9 +32,14 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
+
+# cloudflare
+.wrangler/
+.dev.vars
 
 # typescript
 *.tsbuildinfo
@@ -45,7 +50,21 @@ local-*
 dev.log
 test
 prompt
-
 server.log
+
 # Skills directory
 /skills/
+
+# Z.ai sandbox files (not needed for Cloudflare)
+Caddyfile
+.zscripts/
+examples/
+mini-services/
+upload/
+download/
+worklog.md
+*.png
+!public/*.png
+!public/*.jpg
+!public/*.ico
+!public/*.svg

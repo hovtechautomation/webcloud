@@ -1,6 +1,8 @@
 import { MetadataRoute } from 'next';
 import { getEntries, getAllSlugs, CONTENT_TYPES } from '@/lib/contentful';
 
+export const runtime = 'edge';
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.hovtechautomation.com';
   const now = new Date();

@@ -13,8 +13,8 @@ export const metadata: Metadata = {
   description: 'Solusi lengkap untuk kebutuhan otomasi, IoT, dan pengembangan sistem industri Anda.',
 };
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Cloudflare Edge: ISR — revalidate every 5 minutes
+export const revalidate = 300;
 
 const defaultServices = [
   { _id: '1', title: 'PLC & Microcontroller', description: 'Pemrograman PLC, SCADA, HMI, dan Microcontroller untuk otomasi industri.', imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800&h=600', features: ['Pemrograman PLC', 'HMI/SCADA', 'Microcontroller', 'Integrasi sistem'], order: 1 },

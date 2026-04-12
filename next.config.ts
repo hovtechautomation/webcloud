@@ -1,9 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  // Cloudflare Pages compatibility:
+  // - No "standalone" output (Edge runtime only)
+  // - No sharp (native module not supported)
   reactStrictMode: true,
   images: {
+    unoptimized: true, // Required: sharp is unavailable on Cloudflare Workers
     remotePatterns: [
       {
         protocol: "https",
