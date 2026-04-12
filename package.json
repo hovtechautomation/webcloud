@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
-    "pages:build": "npx @cloudflare/next-on-pages",
+    "pages:build": "npx opennextjs-cloudflare build",
     "build": "next build",
-    "preview": "npx wrangler pages dev .vercel/output/static",
-    "deploy": "npx wrangler pages deploy .vercel/output/static",
+    "preview": "npx wrangler pages dev .open-next/assets",
+    "deploy": "npx wrangler pages deploy .open-next/assets",
     "lint": "eslint ."
   },
   "dependencies": {
@@ -29,7 +29,7 @@
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "^1",
+    "@opennextjs/cloudflare": "^1",
     "@tailwindcss/postcss": "^4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
