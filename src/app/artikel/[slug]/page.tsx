@@ -1,5 +1,3 @@
-export const runtime = 'edge';
-
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Navbar from '@/components/layout/Navbar';
@@ -12,7 +10,7 @@ import { getEntryBySlug, CONTENT_TYPES, getAssetUrl, getFirstImageUrl } from '@/
 import { getCompanyInfo } from '@/lib/company';
 import RichTextWrapper from '@/components/ui/rich-text-wrapper';
 
-// Cloudflare Edge: ISR — revalidate every 5 minutes
+// ISR — revalidate every 5 minutes
 export const revalidate = 300;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
