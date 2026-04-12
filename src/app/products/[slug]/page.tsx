@@ -10,7 +10,8 @@ import { ArrowLeft, MessageCircle, Package, FileText, ChevronRight } from 'lucid
 import { Button } from '@/components/ui/button';
 import { getEntryBySlug, CONTENT_TYPES, getAssetUrl, getGalleryUrls, getFirstImageUrl } from '@/lib/contentful';
 import { getCompanyInfo } from '@/lib/company';
-import RichTextRenderer from '@/components/ui/rich-text-renderer';
+import dynamic from 'next/dynamic';
+const RichTextRenderer = dynamic(() => import('@/components/ui/rich-text-renderer'), { ssr: false });
 
 // Cloudflare Edge: ISR — revalidate every 5 minutes
 export const revalidate = 300;
